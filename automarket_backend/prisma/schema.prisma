@@ -1,0 +1,307 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+url: process.env["DATABASE_URL"]!
+
+}
+
+
+enum TipoVeiculo {
+  BUGGY
+  CAMINHAO_LEVE
+  CONVERSIVEL
+  COUPE
+  PERUA
+  VAN_UTILITARIO
+  SUV
+  HATCH
+  SEDAN
+  ELETRICO
+  PICKUP
+}
+
+enum Cambio {
+  AUTOMATICO
+  MANUAL
+  SEMI_AUTOMATICO
+  AUTOMATIZADO
+}
+
+enum Direcao {
+  HIDRAULICA
+  ELETRO_HIDRAULICA
+  MECANICA
+  ELETRICA
+}
+
+enum Combustivel {
+  ALCOOL
+  GASOLINA
+  FLEX
+  DIESEL
+  GNV
+  HIBRIDO
+  ELETRICO
+}
+
+enum Cor {
+  AMARELO
+  AZUL
+  BRANCO
+  CINZA
+  LARANJA
+  PRETO
+  PRATA
+  VERDE
+  VERMELHO
+  OUTRO
+}
+
+enum StatusVeiculo {
+  DISPONIVEL
+  RESERVADO
+  VENDIDO
+}
+
+enum ItemVeiculo {
+  // Segurança e Proteção
+  AIRBAG
+  AIRBAG_CORTINA
+  AIRBAG_JOELHO
+  ALARME
+  CAMERA_RE
+  CAMERA_360
+  SENSOR_RE
+  SENSOR_DIANTEIRO
+  BLINDADO
+  IMOBILIZADOR
+  RASTREADOR
+  PILOTO_AUTOMATICO_ADAPTATIVO
+  FREIO_AUTONOMO_EMERGENCIA
+  ALERTA_COLISAO_FRONTAL
+  ALERTA_PONTO_CEGO
+  ALERTA_SAIDA_FAIXA
+  ASSISTENTE_MANUTENCAO_FAIXA
+  ALERTA_TRAFEGO_CRUZADO_TRASEIRO
+  CONTROLE_ESTABILIDADE
+  CONTROLE_TRACAO
+  ASSISTENTE_PARTIDA_RAMPA
+  ASSISTENTE_DESCIDA_RAMPA
+  SENSOR_FADIGA_MOTORISTA
+  RECONHECIMENTO_PLACAS_TRANSITO
+  FAROL_ALTO_AUTOMATICO
+  ESTACIONAMENTO_AUTOMATICO
+
+  AR_CONDICIONADO
+  AR_CONDICIONADO_DIGITAL
+  CLIMATIZACAO_BI_ZONA
+  TETO_SOLAR
+  TETO_PANORAMICO
+  BANCOS_COURO
+  BANCO_MOTORISTA_ELETRICO
+  BANCO_AQUECIDO
+  BANCO_VENTILADO
+  BANCO_MEMORIA
+  TRAVA_ELETRICA
+  VIDRO_ELETRICO
+  CHAVE_PRESENCIAL
+  PARTIDA_BOTAO
+  PORTA_MALAS_ELETRICO
+  ABERTURA_PORTA_MALAS_SENSOR
+  RETROVISOR_ELETRICO
+  RETROVISOR_REBATIVEL_ELETRICO
+  VOLANTE_AQUECIDO
+  VOLANTE_ELETRICO_AJUSTAVEL
+  ILUMINACAO_AMBIENTE
+  CARREGADOR_INDUCAO
+
+  // Tecnologia e Conectividade
+  CONEXAO_USB
+  CONEXAO_USB_C
+  VOLANTE_MULTIFUNCIONAL
+  INTERFACE_BLUETOOTH
+  SOM
+  SOM_PREMIUM
+  COMPUTADOR_BORDO
+  NAVEGADOR_GPS
+  CENTRAL_MULTIMIDIA
+  TELA_TOUCHSCREEN
+  PAINEL_DIGITAL
+  HEAD_UP_DISPLAY
+  APPLE_CARPLAY
+  ANDROID_AUTO
+  WIFI_INTEGRADO
+  APP_CONTROLE_REMOTO
+  RECONHECIMENTO_VOZ
+  ATUALIZACAO_OTA
+
+  // Desempenho e Outros
+  CONTROLE_VELOCIDADE
+  TRACAO_4X4
+  RODAS_LIGA_LEVE
+  KIT_GNV
+  MODOS_CONDUCAO
+  SUSPENSAO_ADAPTATIVA
+  DIRECAO_ELETRICA_VARIAVEL
+  ESCAPE_ESPORTIVO
+
+  // Elétrico / Híbrido
+  CARREGAMENTO_RAPIDO
+  FRENAGEM_REGENERATIVA
+  MODO_SILENCIOSO
+  PRE_CONDICIONAMENTO_CLIMATIZACAO
+  TOMADA_110V_220V_BORDO
+}
+
+
+model Endereco {
+  id Int @id @default(autoincrement())
+
+  cep    String? @db.VarChar(9)
+  rua    String? @db.VarChar(200)
+  numero String? @db.VarChar(20)
+  bairro String? @db.VarChar(100)
+  cidade String  @db.VarChar(100)
+  estado String  @db.VarChar(2)
+
+  lojaId Int  @unique
+  loja   Loja @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+
+  @@map("enderecos")
+}
+
+model Loja {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(150)
+  slug      String   @unique @db.VarChar(100)
+  logoUrl   String?  @db.VarChar(500)
+  bannerUrl String?  @db.VarChar(500)
+
+  email        String  @unique @db.VarChar(150)
+  telefone     String? @db.VarChar(20)
+  passwordHash String  @db.VarChar(255)
+
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  endereco   Endereco?
+  vendedores Vendedor[]
+  veiculos   Veiculo[]
+
+  @@index([slug])
+  @@map("lojas")
+}
+
+
+model Vendedor {
+  id       Int     @id @default(autoincrement())
+  nome     String  @db.VarChar(150)
+  fotoUrl  String? @db.VarChar(500)
+  whatsapp String  @db.VarChar(20)
+  ativo    Boolean @default(true)
+
+  lojaId Int
+  loja   Loja @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+
+  contatos ContatoWhatsapp[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([lojaId])
+  @@map("vendedores")
+}
+
+
+model Veiculo {
+  id Int @id @default(autoincrement())
+
+  lojaId Int
+  loja   Loja @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+
+  // marca/modelo vêm de um <select> populado pela FIPE API no cadastro,
+  // por isso ficam como String (padronizados na UI, não no banco).
+  // Os IDs FIPE ficam guardados pra permitir reconsulta de preço no futuro.
+  marca        String @db.VarChar(100)
+  marcaFipeId  Int?
+  modelo       String @db.VarChar(150)
+  modeloFipeId Int?
+
+  versao        String      @db.VarChar(150)
+  anoFabricacao Int
+  anoModelo     Int
+  tipoVeiculo   TipoVeiculo
+  cambio        Cambio
+  portas        Int
+  combustivel   Combustivel
+  direcao       Direcao
+  potenciaMotor String      @db.VarChar(50)
+  cor           Cor
+  quilometragem Int
+  descricao     String      @db.Text
+  preco         Float
+
+  // itens de série: lista fixa do sistema, muda raramente (3-6 meses),
+  // por isso array de enum em vez de tabela relacional
+  itens ItemVeiculo[]
+
+  // opcionais
+  precoPromocional          Float?
+  documentacaoRegularizacao String? @db.VarChar(200)
+  conservacaoGarantia       String? @db.VarChar(200)
+  aceitaTroca               Boolean @default(false)
+  aceitaFinanciamento       Boolean @default(false)
+
+  status        StatusVeiculo @default(DISPONIVEL)
+  visualizacoes Int           @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  dataVenda DateTime?
+
+  ativo Boolean @default(true)
+
+  imagens  VeiculoImagem[]
+  contatos ContatoWhatsapp[]
+
+  @@index([lojaId])
+  @@index([lojaId, status])
+  @@index([marca, modelo])
+  @@map("veiculos")
+}
+
+model VeiculoImagem {
+  id    Int     @id @default(autoincrement())
+  url   String  @db.VarChar(500)
+  ordem Int     @default(0)
+  capa  Boolean @default(false)
+
+  veiculoId Int
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+
+  @@index([veiculoId])
+  @@map("veiculo_imagens")
+}
+
+
+model ContatoWhatsapp {
+  id Int @id @default(autoincrement())
+
+  veiculoId Int
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
+
+  vendedorId Int
+  vendedor   Vendedor @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([veiculoId])
+  @@index([vendedorId])
+  @@map("contatos_whatsapp")
+}
