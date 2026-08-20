@@ -1,6 +1,5 @@
 import {
   IsString,
-  IsInt,
   IsOptional,
   IsBoolean,
   IsUrl,
@@ -9,9 +8,6 @@ import {
 } from 'class-validator';
 
 export class CreateVendedorDto {
-  @IsInt()
-  lojaId!: number;
-
   @IsString()
   @MaxLength(150)
   nome!: string;
