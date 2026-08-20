@@ -39,9 +39,6 @@ export class VeiculoImagemDto {
 }
 
 export class CreateVeiculoDto {
-  @IsInt()
-  lojaId!: number;
-
   // Marca / Modelo
   @IsString()
   @MaxLength(100)
@@ -58,10 +55,6 @@ export class CreateVeiculoDto {
   @IsOptional()
   @IsInt()
   modeloFipeId?: number;
-
-  @IsString()
-  @MaxLength(150)
-  versao!: string;
 
   @IsInt()
   anoFabricacao!: number;
@@ -118,11 +111,6 @@ export class CreateVeiculoDto {
   @IsOptional()
   @IsNumber()
   precoPromocional?: number;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  estadoFinanceiro?: string;
 
   @IsOptional()
   @IsString()

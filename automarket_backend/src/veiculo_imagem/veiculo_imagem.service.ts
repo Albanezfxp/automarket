@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
   BadRequestException,
   InternalServerErrorException,
   Logger,
@@ -24,20 +25,24 @@ export class VeiculoImagemService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createVeiculoImagemDto: CreateVeiculoImagemDto) {
-    // Garante que o veículo informado realmente existe antes de criar a imagem
+  async create(createVeiculoImagemDto: CreateVeiculoImagemDto, lojaId: number) {
+    // Garante que o veículo informado realmente existe e pertence à loja autenticada
     try {
       const veiculo = await this.prisma.veiculo.findUnique({
         where: { id: createVeiculoImagemDto.veiculoId },
-        select: { id: true },
+        select: { id: true, lojaId: true },
       });
       if (!veiculo) {
         throw new BadRequestException(
           `Veículo com id ${createVeiculoImagemDto.veiculoId} não encontrado.`,
         );
       }
+      if (veiculo.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a esse veículo.');
+      }
     } catch (error) {
       if (error instanceof BadRequestException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(
         'Erro ao verificar veículo para criação de imagem',
         error,
@@ -92,10 +97,10 @@ export class VeiculoImagemService {
     }
   }
 
-  async findAll(params: { veiculoId?: number } = {}) {
+  async findAll(lojaId: number, veiculoId?: number) {
     try {
       return await this.prisma.veiculoImagem.findMany({
-        where: { veiculoId: params.veiculoId },
+        where: { veiculoId, veiculo: { lojaId } },
         select: SELECT_PUBLICO,
         orderBy: [{ capa: 'desc' }, { ordem: 'asc' }],
       });
@@ -107,20 +112,25 @@ export class VeiculoImagemService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, lojaId: number) {
     try {
       const imagem = await this.prisma.veiculoImagem.findUnique({
         where: { id },
-        select: SELECT_PUBLICO,
+        select: { ...SELECT_PUBLICO, veiculo: { select: { lojaId: true } } },
       });
 
       if (!imagem) {
         throw new NotFoundException(`Imagem com id ${id} não encontrada.`);
       }
+      if (imagem.veiculo.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a essa imagem.');
+      }
 
-      return imagem;
+      const { veiculo: _veiculo, ...imagemPublica } = imagem;
+      return imagemPublica;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(`Erro ao buscar imagem ${id}`, error);
       throw new InternalServerErrorException(
         'Não foi possível buscar a imagem.',
@@ -128,7 +138,7 @@ export class VeiculoImagemService {
     }
   }
 
-  async update(id: number, updateVeiculoImagemDto: UpdateVeiculoImagemDto) {
+  async update(id: number, updateVeiculoImagemDto: UpdateVeiculoImagemDto, lojaId: number) {
     if (
       !updateVeiculoImagemDto ||
       Object.keys(updateVeiculoImagemDto).length === 0
@@ -138,7 +148,7 @@ export class VeiculoImagemService {
       );
     }
 
-    const imagemAtual = await this.buscarOuFalhar(id);
+    const imagemAtual = await this.buscarOuFalhar(id, lojaId);
 
     try {
       // Se está marcando essa imagem como capa, desmarca as outras do mesmo veículo
@@ -184,8 +194,8 @@ export class VeiculoImagemService {
     }
   }
 
-  async remove(id: number) {
-    const imagem = await this.buscarOuFalhar(id);
+  async remove(id: number, lojaId: number) {
+    const imagem = await this.buscarOuFalhar(id, lojaId);
 
     try {
       await this.prisma.veiculoImagem.delete({ where: { id } });
@@ -223,17 +233,22 @@ export class VeiculoImagemService {
   // ==========================================
   // Helper privado
   // ==========================================
-  private async buscarOuFalhar(id: number) {
+  private async buscarOuFalhar(id: number, lojaId: number) {
     try {
       const imagem = await this.prisma.veiculoImagem.findUnique({
         where: { id },
+        include: { veiculo: { select: { lojaId: true } } },
       });
       if (!imagem) {
         throw new NotFoundException(`Imagem com id ${id} não encontrada.`);
       }
+      if (imagem.veiculo.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a essa imagem.');
+      }
       return imagem;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(`Erro ao verificar existência da imagem ${id}`, error);
       throw new InternalServerErrorException(
         'Não foi possível verificar a imagem.',
