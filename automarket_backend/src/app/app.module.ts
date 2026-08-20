@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
@@ -21,16 +23,28 @@ import { ContatoWhatsappService } from 'src/contato_whatsapp/contato_whatsapp.se
 import { EnderecoService } from 'src/endereco/endereco.service';
 import { VeiculoImagemService } from 'src/veiculo_imagem/veiculo_imagem.service';
 import { VendedorService } from 'src/vendedor/vendedor.service';
+import { UploadsModule } from 'src/uploads/uploads.module';
+import { ApiFipeModule } from 'src/api_fipe/api_fipe.module';
+import { ApiFipeController } from 'src/api_fipe/api_fipe.controller';
+import { ApiFipeService } from 'src/api_fipe/api_fipe.service';
+import { AuthModule } from 'src/auth/auth.module';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { DashboardModule } from 'src/dashboard/dashboard.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     PrismaModule,
+    AuthModule,
     VeiculosModule,
     LojasModule,
     ContatoWhatsappModule,
     EnderecoModule,
     VeiculoImagemModule,
     VendedorModule,
+    UploadsModule,
+    ApiFipeModule,
+    DashboardModule,
   ],
   controllers: [
     AppController,
@@ -40,6 +54,7 @@ import { VendedorService } from 'src/vendedor/vendedor.service';
     EnderecoController,
     VeiculoImagemController,
     VendedorController,
+    ApiFipeController,
   ],
   providers: [
     AppService,
@@ -50,6 +65,8 @@ import { VendedorService } from 'src/vendedor/vendedor.service';
     EnderecoService,
     VeiculoImagemService,
     VendedorService,
+    ApiFipeService,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
 export class AppModule {}
