@@ -1,0 +1,221 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--catalog-color-surface) 92%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.headerCompact {
+  border-bottom-color: var(--catalog-color-border);
+  box-shadow: 0 8px 24px -16px rgba(16, 17, 22, 0.35);
+}
+
+.inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 18px var(--catalog-space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--catalog-space-xl);
+  transition: padding 0.25s ease;
+}
+
+.headerCompact .inner {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* Marca ------------------------------------------------------------- */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.logo {
+  height: 40px;
+  max-width: 168px;
+  object-fit: contain;
+}
+
+.mark {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--catalog-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--catalog-color-primary);
+  color: var(--catalog-color-on-primary);
+  font: 700 17px var(--catalog-font-heading);
+}
+
+.brandName {
+  font: 600 19px/1.2 var(--catalog-font-heading);
+  letter-spacing: -0.01em;
+  color: var(--catalog-color-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Nav ----------------------------------------------------------------- */
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--catalog-space-xl);
+}
+
+.navLink {
+  position: relative;
+  padding: 4px 0;
+  border: none;
+  background: none;
+  text-decoration: none;
+  font: var(--catalog-text-label-md);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--catalog-color-on-surface-variant);
+  cursor: pointer;
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -3px;
+  height: 2px;
+  background: var(--catalog-color-secondary);
+  transition: right 0.2s ease;
+}
+
+.navLink:hover {
+  color: var(--catalog-color-on-surface);
+}
+
+.navLink:hover::after {
+  right: 0;
+}
+
+.navLinkActive {
+  color: var(--catalog-color-on-surface);
+}
+
+.navLinkActive::after {
+  right: 0;
+  background: var(--catalog-color-primary);
+}
+
+/* Ações ----------------------------------------------------------------- */
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--catalog-space-md);
+}
+
+.phoneLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--catalog-radius-full);
+  border: 1px solid var(--catalog-color-border);
+  text-decoration: none;
+  color: var(--catalog-color-on-surface);
+  font: var(--catalog-text-body-sm);
+  white-space: nowrap;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.phoneLink:hover {
+  border-color: var(--catalog-color-secondary);
+  color: var(--catalog-color-secondary);
+}
+
+.phoneNumber {
+  font-weight: 600;
+}
+
+.menuToggle {
+  display: none;
+  border: none;
+  background: none;
+  padding: 4px;
+  color: var(--catalog-color-on-surface);
+  cursor: pointer;
+}
+
+/* Painel mobile ----------------------------------------------------------- */
+
+.mobilePanel {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .nav {
+    display: none;
+  }
+
+  .phoneNumber {
+    display: none;
+  }
+
+  .phoneLink {
+    padding: 8px;
+    border-radius: var(--catalog-radius-full);
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  .mobilePanel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--catalog-space-lg);
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 var(--catalog-space-lg);
+    border-top: 1px solid transparent;
+    background: var(--catalog-color-surface);
+    transition:
+      max-height 0.25s ease,
+      padding 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .mobilePanelOpen {
+    max-height: 260px;
+    padding: var(--catalog-space-lg);
+    border-top-color: var(--catalog-color-border);
+  }
+
+  .mobilePanel .navLink {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .inner,
+  .navLink::after,
+  .mobilePanel {
+    transition: none;
+  }
+}

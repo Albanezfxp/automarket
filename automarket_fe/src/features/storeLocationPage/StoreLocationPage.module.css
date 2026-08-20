@@ -1,0 +1,164 @@
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.pageHero {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--catalog-color-primary) 6%, var(--catalog-color-surface)) 0%,
+    var(--catalog-color-surface) 100%
+  );
+  border-bottom: 1px solid var(--catalog-color-border);
+}
+
+.pageHeroInner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--catalog-space-xl) var(--catalog-space-lg) var(--catalog-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--catalog-space-sm);
+}
+
+.breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  font: var(--catalog-text-body-sm);
+  color: var(--catalog-color-on-surface-variant);
+  text-decoration: none;
+  margin-bottom: var(--catalog-space-md);
+}
+
+.breadcrumb:hover {
+  color: var(--catalog-color-secondary);
+}
+
+.title {
+  font: var(--catalog-text-display-md);
+  color: var(--catalog-color-on-surface);
+}
+
+.body {
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--catalog-space-2xl) var(--catalog-space-lg);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--catalog-space-2xl);
+  align-items: stretch;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Placa de endereço ------------------------------------------------------ */
+
+.signage {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrow {
+  font: var(--catalog-text-label-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--catalog-color-secondary);
+  margin-bottom: var(--catalog-space-sm);
+}
+
+.street {
+  font: var(--catalog-text-display-lg);
+  color: var(--catalog-color-on-surface);
+  margin-bottom: 4px;
+}
+
+.cityLine {
+  font: var(--catalog-text-headline-sm);
+  font-weight: 400;
+  color: var(--catalog-color-on-surface-variant);
+}
+
+.cep {
+  font: var(--catalog-text-body-md);
+  color: var(--catalog-color-on-surface-variant);
+  margin-top: 2px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--catalog-space-md);
+  margin-top: var(--catalog-space-xl);
+}
+
+.primaryCta,
+.secondaryCta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: var(--catalog-radius-full);
+  font: var(--catalog-text-label-md);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.primaryCta {
+  background: var(--catalog-color-secondary);
+  color: var(--catalog-color-on-secondary);
+  box-shadow: var(--catalog-shadow-level-1);
+}
+
+.secondaryCta {
+  border: 1px solid var(--catalog-color-border);
+  color: var(--catalog-color-on-surface);
+}
+
+.secondaryCta:hover {
+  border-color: var(--catalog-color-secondary);
+  color: var(--catalog-color-secondary);
+}
+
+/* Mapa --------------------------------------------------------------- */
+
+.mapPanel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
+  border-radius: var(--catalog-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--catalog-color-border);
+  box-shadow: var(--catalog-shadow-level-1);
+  background: var(--catalog-color-surface-container-low);
+}
+
+.mapFrame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Estado vazio ------------------------------------------------------------ */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: var(--catalog-space-2xl) 0;
+  color: var(--catalog-color-on-surface-variant);
+}

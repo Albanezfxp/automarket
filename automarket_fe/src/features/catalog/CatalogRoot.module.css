@@ -1,0 +1,14 @@
+.fallback {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #5a5c66;
+  font-family: Inter, sans-serif;
+}
+
+.fallback .material-symbols-outlined {
+  font-size: 40px;
+}

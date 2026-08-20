@@ -1,0 +1,81 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 14, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--catalog-space-md);
+}
+
+.dialog {
+  background: var(--catalog-color-surface);
+  border-radius: var(--catalog-radius-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--catalog-space-lg);
+  box-shadow: var(--catalog-shadow-level-2);
+}
+
+.title {
+  font: var(--catalog-text-headline-md);
+  color: var(--catalog-color-on-surface);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font: var(--catalog-text-body-sm);
+  color: var(--catalog-color-on-surface-variant);
+  margin-bottom: var(--catalog-space-md);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--catalog-space-sm);
+}
+
+.sellerButton {
+  display: flex;
+  align-items: center;
+  gap: var(--catalog-space-sm);
+  padding: 12px 14px;
+  border-radius: var(--catalog-radius-md);
+  border: 1px solid var(--catalog-color-border);
+  background: var(--catalog-color-surface-container-low);
+  cursor: pointer;
+  text-align: left;
+  font: var(--catalog-text-body-md);
+  color: var(--catalog-color-on-surface);
+}
+
+.sellerButton:hover {
+  border-color: var(--catalog-color-secondary);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--catalog-color-surface-container);
+  flex-shrink: 0;
+}
+
+.closeButton {
+  margin-top: var(--catalog-space-md);
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--catalog-radius-md);
+  border: none;
+  background: transparent;
+  color: var(--catalog-color-on-surface-variant);
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background-color: var(--catalog-color-error);
+  transition: 400ms;
+  color: #fff;
+}

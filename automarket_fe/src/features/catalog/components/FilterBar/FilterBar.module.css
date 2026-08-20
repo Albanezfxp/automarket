@@ -1,0 +1,85 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--catalog-space-sm);
+  align-items: center;
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1 1 320px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border-radius: var(--catalog-radius-full);
+  border: 1px solid var(--catalog-color-border);
+  background: var(--catalog-color-surface);
+  font: var(--catalog-text-body-md);
+  color: var(--catalog-color-on-surface);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.searchInput:hover {
+  border-color: var(--catalog-color-outline);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--catalog-color-secondary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--catalog-color-secondary) 16%, transparent);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--catalog-color-outline);
+}
+
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b8d97' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding: 10px 36px 10px 14px;
+  border-radius: var(--catalog-radius-full);
+  border: 1px solid var(--catalog-color-border);
+  background-color: var(--catalog-color-surface);
+  font: var(--catalog-text-body-sm);
+  color: var(--catalog-color-on-surface);
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.select:hover {
+  border-color: var(--catalog-color-outline);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--catalog-color-secondary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--catalog-color-secondary) 16%, transparent);
+}
+
+.select.active {
+  border-color: var(--catalog-color-secondary);
+  color: var(--catalog-color-secondary);
+  font-weight: 600;
+}
+
+.clearButton {
+  padding: 10px 16px;
+  border-radius: var(--catalog-radius-full);
+  border: none;
+  background: transparent;
+  color: var(--catalog-color-on-surface-variant);
+  font: var(--catalog-text-body-sm);
+  cursor: pointer;
+}

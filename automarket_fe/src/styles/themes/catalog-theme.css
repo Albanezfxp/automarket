@@ -1,0 +1,91 @@
+/**
+ * Tokens do tema "catalog" (site público — catálogo + detalhe do veículo).
+ *
+ * Escopados na classe `.catalog-theme` (nunca em `:root` global), mesmo
+ * racional do `.admin-theme`: evita colisão de nomes entre os dois temas
+ * que convivem no mesmo bundle. Prefixo `--catalog-*` em vez de `--admin-*`.
+ *
+ * Direção visual: e-commerce automotivo — vitrine limpa, foco no produto
+ * (o veículo/foto), com a identidade da loja (logo/banner/cor) como
+ * protagonista. Ver `automarket_fe/.claude/skills/frontend-design` e o
+ * plano documentado em CatalogPage/VehicleDetailPage.
+ *
+ * Fontes carregadas via Google Fonts (Geist foi adicionado ao catálogo do
+ * Google Fonts) — só neste arquivo, não em index.html, então o painel
+ * admin (que não importa este CSS) não paga o custo.
+ *
+ * `--catalog-color-primary`/`--catalog-color-secondary` são os dois tokens
+ * sobrescritos por loja (via `style` inline no `CatalogLayout`, a partir de
+ * `Loja.corPrimaria`/`Loja.corSecundaria`) — os valores aqui são só o
+ * fallback para lojas que não customizaram.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+.catalog-theme {
+  /* Cor — superfícies (neutro claro, deixa a foto do veículo ser o centro) */
+  --catalog-color-background: #f7f7f8;
+  --catalog-color-surface: #ffffff;
+  --catalog-color-surface-container-low: #fbfbfc;
+  --catalog-color-surface-container: #f1f1f3;
+  --catalog-color-surface-container-high: #e7e7ea;
+  --catalog-color-border: #e3e3e7;
+
+  /* Cor — texto */
+  --catalog-color-on-surface: #16171c;
+  --catalog-color-on-surface-variant: #5a5c66;
+  --catalog-color-outline: #8b8d97;
+  --catalog-color-outline-variant: #d7d7dc;
+
+  /* Cor — marca da loja (sobrescrita por loja via style inline) */
+  --catalog-color-primary: #091426;
+  --catalog-color-on-primary: #ffffff;
+  --catalog-color-secondary: #0058be;
+  --catalog-color-on-secondary: #ffffff;
+
+  /* Cor — feedback / selos de status do veículo */
+  --catalog-color-success: #1f9d63;
+  --catalog-color-warning: #d89a3d;
+  --catalog-color-error: #d84f4f;
+  --catalog-color-error-container: #fbe1de;
+
+  /* Espaçamento */
+  --catalog-space-xs: 4px;
+  --catalog-space-sm: 8px;
+  --catalog-space-md: 16px;
+  --catalog-space-lg: 24px;
+  --catalog-space-xl: 40px;
+  --catalog-space-2xl: 64px;
+
+  /* Raio */
+  --catalog-radius-sm: 8px;
+  --catalog-radius-md: 12px;
+  --catalog-radius-lg: 18px;
+  --catalog-radius-full: 9999px;
+
+  /* Tipografia — Geist (títulos) + Inter (corpo), carregadas aqui mesmo,
+     não em index.html, pra não pesar o bundle do painel admin. */
+  --catalog-font-heading: 'Geist', 'Inter', sans-serif;
+  --catalog-font-body: 'Inter', sans-serif;
+
+  --catalog-text-display-lg: 700 44px/50px var(--catalog-font-heading);
+  --catalog-text-display-md: 700 32px/38px var(--catalog-font-heading);
+  --catalog-text-headline-lg: 600 26px/32px var(--catalog-font-heading);
+  --catalog-text-headline-md: 600 20px/28px var(--catalog-font-heading);
+  --catalog-text-headline-sm: 600 16px/22px var(--catalog-font-heading);
+  --catalog-text-body-lg: 400 18px/26px var(--catalog-font-body);
+  --catalog-text-body-md: 400 15px/22px var(--catalog-font-body);
+  --catalog-text-body-sm: 400 13px/18px var(--catalog-font-body);
+  --catalog-text-label-md: 600 13px/18px var(--catalog-font-body);
+  --catalog-text-label-sm: 600 11.5px/16px var(--catalog-font-body);
+  --catalog-text-price-lg: 700 26px/32px var(--catalog-font-heading);
+  --catalog-text-price-md: 700 20px/26px var(--catalog-font-heading);
+
+  /* Elevação */
+  --catalog-shadow-level-1: 0 1px 2px rgba(16, 17, 22, 0.05), 0 2px 8px rgba(16, 17, 22, 0.05);
+  --catalog-shadow-level-2: 0 16px 32px -12px rgba(16, 17, 22, 0.22), 0 4px 10px rgba(16, 17, 22, 0.06);
+
+  background-color: var(--catalog-color-background);
+  color: var(--catalog-color-on-surface);
+  font: var(--catalog-text-body-md);
+}
