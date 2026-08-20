@@ -1,0 +1,51 @@
+/**
+ * "Etiqueta" — o elemento-assinatura do painel: uma tag retangular flat com
+ * uma barra de cor de 3px na lateral, fonte mono pro dado (status, preço,
+ * especificação tratados como dado de ficha/etiqueta de estoque, não como
+ * botão). Sem gradiente, sem pílula, sem brilho — só cor sólida e uma borda
+ * de identificação. Usado só onde o dado É de fato identificação/status
+ * (preço, status do veículo, ação sugerida), nunca como decoração solta.
+ */
+
+.plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--admin-text-data-sm);
+  letter-spacing: 0.02em;
+  padding: 5px 12px 5px 10px;
+  border-radius: var(--admin-radius-sm);
+  border-left: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.plateInk {
+  background: var(--admin-color-primary);
+  border-left-color: var(--admin-color-accent);
+  color: var(--admin-color-on-primary);
+}
+
+.plateAccent {
+  background: color-mix(in srgb, var(--admin-color-accent) 12%, var(--admin-color-surface-container-lowest));
+  border-left-color: var(--admin-color-accent);
+  color: var(--admin-color-accent-hover);
+}
+
+.plateOutline {
+  background: var(--admin-color-surface-container-lowest);
+  color: var(--admin-color-on-surface-variant);
+  border-left-color: var(--admin-color-outline-variant);
+  box-shadow: inset 0 0 0 1px var(--admin-color-outline-variant);
+}
+
+.plateSuccess {
+  background: color-mix(in srgb, var(--admin-color-success) 12%, var(--admin-color-surface-container-lowest));
+  border-left-color: var(--admin-color-success);
+  color: color-mix(in srgb, var(--admin-color-success) 70%, black);
+}
+
+.plateMuted {
+  background: var(--admin-color-surface-variant);
+  border-left-color: var(--admin-color-outline-variant);
+  color: var(--admin-color-on-surface-variant);
+}

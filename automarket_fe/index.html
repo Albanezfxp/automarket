@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AutoMarket</title>
+
+    <!-- Painel administrativo: Plus Jakarta Sans (geométrica, arredondada,
+         acolhedora) para títulos e navegação + Inter para corpo de
+         texto/formulários + JetBrains Mono para todo dado numérico (preço,
+         km, contadores) — trata número de veículo como dado técnico, sem
+         abrir mão de legibilidade no resto da interface. O catálogo público
+         (futuro) usa fontes próprias, carregadas por página/produto. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Eixos fixos em vez de faixa variável completa: `reset.css` só usa
+         FILL 0 / wght 400 / GRAD 0 / opsz 24 em todo o app, então pedir o
+         intervalo inteiro só infla a tabela de variação da fonte à toa. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
