@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  ForbiddenException,
   BadRequestException,
   InternalServerErrorException,
   Logger,
@@ -28,18 +29,16 @@ export class EnderecoService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createEnderecoDto: CreateEnderecoDto) {
+  async create(createEnderecoDto: CreateEnderecoDto, lojaId: number) {
     // Garante que a loja existe e ainda não tem endereço (relação é 1:1)
     try {
       const loja = await this.prisma.loja.findUnique({
-        where: { id: createEnderecoDto.lojaId },
+        where: { id: lojaId },
         select: { id: true, endereco: { select: { id: true } } },
       });
 
       if (!loja) {
-        throw new BadRequestException(
-          `Loja com id ${createEnderecoDto.lojaId} não encontrada.`,
-        );
+        throw new BadRequestException(`Loja com id ${lojaId} não encontrada.`);
       }
 
       if (loja.endereco) {
@@ -66,7 +65,7 @@ export class EnderecoService {
     try {
       return await this.prisma.endereco.create({
         data: {
-          lojaId: createEnderecoDto.lojaId,
+          lojaId,
           cep: createEnderecoDto.cep,
           rua: createEnderecoDto.rua,
           numero: createEnderecoDto.numero,
@@ -94,9 +93,10 @@ export class EnderecoService {
     }
   }
 
-  async findAll() {
+  async findAll(lojaId: number) {
     try {
       return await this.prisma.endereco.findMany({
+        where: { lojaId },
         select: SELECT_PUBLICO,
         orderBy: { cidade: 'asc' },
       });
@@ -108,7 +108,7 @@ export class EnderecoService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, lojaId: number) {
     try {
       const endereco = await this.prisma.endereco.findUnique({
         where: { id },
@@ -118,10 +118,14 @@ export class EnderecoService {
       if (!endereco) {
         throw new NotFoundException(`Endereço com id ${id} não encontrado.`);
       }
+      if (endereco.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a esse endereço.');
+      }
 
       return endereco;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(`Erro ao buscar endereço ${id}`, error);
       throw new InternalServerErrorException(
         'Não foi possível buscar o endereço.',
@@ -129,7 +133,11 @@ export class EnderecoService {
     }
   }
 
-  async findByLojaId(lojaId: number) {
+  async findByLojaId(lojaId: number, requisitanteLojaId: number) {
+    if (lojaId !== requisitanteLojaId) {
+      throw new ForbiddenException('Você não tem acesso a esse endereço.');
+    }
+
     try {
       const endereco = await this.prisma.endereco.findUnique({
         where: { lojaId },
@@ -145,6 +153,7 @@ export class EnderecoService {
       return endereco;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(`Erro ao buscar endereço da loja ${lojaId}`, error);
       throw new InternalServerErrorException(
         'Não foi possível buscar o endereço.',
@@ -152,14 +161,14 @@ export class EnderecoService {
     }
   }
 
-  async update(id: number, updateEnderecoDto: UpdateEnderecoDto) {
+  async update(id: number, updateEnderecoDto: UpdateEnderecoDto, lojaId: number) {
     if (!updateEnderecoDto || Object.keys(updateEnderecoDto).length === 0) {
       throw new BadRequestException(
         'Nenhum dado foi enviado para atualização.',
       );
     }
 
-    await this.garantirQueExiste(id);
+    await this.garantirQueExiste(id, lojaId);
 
     try {
       return await this.prisma.endereco.update({
@@ -188,8 +197,8 @@ export class EnderecoService {
     }
   }
 
-  async remove(id: number) {
-    await this.garantirQueExiste(id);
+  async remove(id: number, lojaId: number) {
+    await this.garantirQueExiste(id, lojaId);
 
     try {
       // Cuidado: como lojaId é @unique em Endereco, apagar aqui deixa a
@@ -210,17 +219,21 @@ export class EnderecoService {
     }
   }
 
-  private async garantirQueExiste(id: number) {
+  private async garantirQueExiste(id: number, lojaId: number) {
     try {
       const endereco = await this.prisma.endereco.findUnique({
         where: { id },
-        select: { id: true },
+        select: { id: true, lojaId: true },
       });
       if (!endereco) {
         throw new NotFoundException(`Endereço com id ${id} não encontrado.`);
       }
+      if (endereco.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a esse endereço.');
+      }
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(
         `Erro ao verificar existência do endereço ${id}`,
         error,

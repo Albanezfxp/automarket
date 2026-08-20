@@ -17,10 +17,18 @@ const SELECT_PUBLICO = {
   id: true,
   nome: true,
   slug: true,
-  logoUrl: true,
-  bannerUrl: true,
+  logo: true,
+  banner: true,
+  corPrimaria: true,
+  corSecundaria: true,
   email: true,
   telefone: true,
+  whatsapp: true,
+  horarioAbertura: true,
+  horarioFechamento: true,
+  facebookUrl: true,
+  instagramUrl: true,
+  youtubeUrl: true,
   ativo: true,
   createdAt: true,
   updatedAt: true,
@@ -36,6 +44,9 @@ export class LojasService {
   async create(createLojaDto: CreateLojaDto) {
     if (createLojaDto.password !== createLojaDto.confirm_password) {
       throw new BadRequestException('As senhas não coincidem.');
+    }
+    if (createLojaDto.managerPassword !== createLojaDto.confirmManagerPassword) {
+      throw new BadRequestException('As senhas do gerente não coincidem.');
     }
 
     try {
@@ -70,8 +81,13 @@ export class LojasService {
     }
 
     let passwordHash: string;
+    let managerPasswordHash: string;
     try {
       passwordHash = await bcrypt.hash(createLojaDto.password, 10);
+      managerPasswordHash = await bcrypt.hash(
+        createLojaDto.managerPassword,
+        10,
+      );
     } catch (error) {
       this.logger.error('Erro ao gerar hash de senha', error);
       throw new InternalServerErrorException(
@@ -84,11 +100,20 @@ export class LojasService {
         data: {
           nome: createLojaDto.nome,
           slug,
-          logoUrl: createLojaDto.logoUrl,
-          bannerUrl: createLojaDto.bannerUrl,
+          logo: createLojaDto.logo,
+          banner: createLojaDto.banner,
+          corPrimaria: createLojaDto.corPrimaria,
+          corSecundaria: createLojaDto.corSecundaria,
           email: createLojaDto.email,
           telefone: createLojaDto.telefone,
+          whatsapp: createLojaDto.whatsapp,
+          horarioAbertura: createLojaDto.horarioAbertura,
+          horarioFechamento: createLojaDto.horarioFechamento,
+          facebookUrl: createLojaDto.facebookUrl,
+          instagramUrl: createLojaDto.instagramUrl,
+          youtubeUrl: createLojaDto.youtubeUrl,
           passwordHash,
+          managerPasswordHash,
           ativo: createLojaDto.ativo ?? true,
           endereco: {
             create: {
@@ -159,8 +184,63 @@ export class LojasService {
     }
   }
 
+  // Dados públicos da loja por slug, pro catálogo público. Só campos que
+  // fazem sentido pro visitante (mesmo SELECT_PUBLICO usado no painel —
+  // já garante que passwordHash/managerPasswordHash nunca vazam) e só
+  // lojas ativas (loja inativa não deve ter site público acessível).
+  //
+  // Inclui vendedores ativos (header + seção "Vendedores" do catálogo
+  // consomem essa mesma chamada, sem round-trip extra) — só os campos que
+  // já são públicos no modal de contato (`VeiculosService.findOnePublico`).
+  async findPublicoPorSlug(slug: string) {
+    try {
+      const loja = await this.prisma.loja.findUnique({
+        where: { slug },
+        select: {
+          ...SELECT_PUBLICO,
+          vendedores: {
+            where: { ativo: true },
+            select: { id: true, nome: true, fotoUrl: true, whatsapp: true },
+          },
+        },
+      });
+
+      if (!loja || !loja.ativo) {
+        throw new NotFoundException(`Loja "${slug}" não encontrada.`);
+      }
+
+      return loja;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      this.logger.error(`Erro ao buscar loja pública "${slug}"`, error);
+      throw new InternalServerErrorException('Não foi possível buscar a loja.');
+    }
+  }
+
   async update(id: number, updateLojaDto: UpdateLojaDto) {
     await this.garantirQueExiste(id);
+
+    // Troca de senha do gerente é opcional aqui — só recalcula o hash se o
+    // client mandou os dois campos; nunca sobrescreve com undefined.
+    let managerPasswordHash: string | undefined;
+    if (updateLojaDto.managerPassword || updateLojaDto.confirmManagerPassword) {
+      if (
+        updateLojaDto.managerPassword !== updateLojaDto.confirmManagerPassword
+      ) {
+        throw new BadRequestException('As senhas do gerente não coincidem.');
+      }
+      try {
+        managerPasswordHash = await bcrypt.hash(
+          updateLojaDto.managerPassword!,
+          10,
+        );
+      } catch (error) {
+        this.logger.error('Erro ao gerar hash da nova senha do gerente', error);
+        throw new InternalServerErrorException(
+          'Não foi possível processar a nova senha do gerente.',
+        );
+      }
+    }
 
     let slug: string | undefined;
     if (updateLojaDto.slug) {
@@ -191,11 +271,20 @@ export class LojasService {
         data: {
           nome: updateLojaDto.nome,
           slug,
-          logoUrl: updateLojaDto.logoUrl,
-          bannerUrl: updateLojaDto.bannerUrl,
+          logo: updateLojaDto.logo,
+          banner: updateLojaDto.banner,
+          corPrimaria: updateLojaDto.corPrimaria,
+          corSecundaria: updateLojaDto.corSecundaria,
           email: updateLojaDto.email,
           telefone: updateLojaDto.telefone,
+          whatsapp: updateLojaDto.whatsapp,
+          horarioAbertura: updateLojaDto.horarioAbertura,
+          horarioFechamento: updateLojaDto.horarioFechamento,
+          facebookUrl: updateLojaDto.facebookUrl,
+          instagramUrl: updateLojaDto.instagramUrl,
+          youtubeUrl: updateLojaDto.youtubeUrl,
           ativo: updateLojaDto.ativo,
+          managerPasswordHash,
           endereco: updateLojaDto.endereco
             ? {
                 upsert: {
