@@ -1,0 +1,43 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-lg);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  padding-bottom: var(--admin-space-sm);
+  border-bottom: 1px solid var(--admin-color-surface-container-highest);
+}
+
+.title {
+  font: var(--admin-text-display-md);
+  color: var(--admin-color-primary);
+}
+
+.subtitle {
+  font: var(--admin-text-body-lg);
+  color: var(--admin-color-on-surface-variant);
+  margin-top: 4px;
+}
+
+.addButton {
+  height: 44px;
+  padding: 0 var(--admin-space-md);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-color-secondary);
+  color: var(--admin-color-on-secondary);
+  font: var(--admin-text-label-md);
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-xs);
+  transition: background-color 150ms ease;
+}
+
+.addButton:hover {
+  background: var(--admin-color-secondary-hover);
+}

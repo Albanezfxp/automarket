@@ -1,0 +1,189 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-sm);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+  padding: 10px;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-low);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.row:hover {
+  border-color: var(--admin-color-outline);
+}
+
+.row:has(.capaRadio input:checked) {
+  border-color: color-mix(in srgb, var(--admin-color-secondary) 40%, transparent);
+  background: color-mix(in srgb, var(--admin-color-secondary) 5%, transparent);
+}
+
+.capaRadio {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--admin-radius-full);
+  background: var(--admin-color-surface-container-high);
+  font: var(--admin-text-label-sm);
+  font-weight: 600;
+  color: var(--admin-color-on-surface-variant);
+  flex-shrink: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.capaRadio:has(input:checked) {
+  background: var(--admin-color-secondary);
+  color: var(--admin-color-on-secondary);
+}
+
+.capaRadio:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-secondary) 22%, transparent);
+}
+
+.capaRadio input {
+  accent-color: var(--admin-color-secondary);
+}
+
+.capaRadio input:focus-visible {
+  outline: none;
+}
+
+.thumbnail {
+  width: 64px;
+  height: 48px;
+  border-radius: var(--admin-radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--admin-color-surface-variant);
+  border: 1px solid var(--admin-color-outline-variant);
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fileArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fileInput {
+  flex: 1;
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.fileInput::file-selector-button {
+  margin-right: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--admin-color-outline-variant);
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-color-surface-container-high);
+  color: var(--admin-color-on-surface);
+  font: var(--admin-text-label-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.fileInput::file-selector-button:hover {
+  background: var(--admin-color-surface-variant);
+  border-color: var(--admin-color-outline);
+}
+
+.fileInput:focus-visible::file-selector-button {
+  outline: none;
+  border-color: var(--admin-color-secondary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-secondary) 16%, transparent);
+}
+
+.progressBar {
+  height: 4px;
+  border-radius: var(--admin-radius-full);
+  background: var(--admin-color-surface-container-high);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--admin-color-secondary);
+  transition: width 150ms ease;
+}
+
+.errorText {
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-error);
+}
+
+.removeButton {
+  color: var(--admin-color-error);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--admin-radius-full);
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  background: var(--admin-color-error-container);
+}
+
+.removeButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.addButton {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  border-radius: var(--admin-radius-md);
+  border: 1.5px dashed var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-low);
+  color: var(--admin-color-secondary);
+  font: var(--admin-text-label-md);
+  font-weight: 600;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.addButton .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.addButton:hover {
+  border-color: var(--admin-color-secondary);
+  background: color-mix(in srgb, var(--admin-color-secondary) 6%, transparent);
+}
+
+.helperText {
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+}

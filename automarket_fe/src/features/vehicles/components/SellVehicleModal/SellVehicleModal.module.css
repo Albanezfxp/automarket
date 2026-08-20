@@ -1,0 +1,84 @@
+.description {
+  font: var(--admin-text-body-md);
+  color: var(--admin-color-on-surface-variant);
+  margin-bottom: var(--admin-space-md);
+}
+
+.stateMessage {
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.stateMessageError {
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-error);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-sm);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+  padding: 10px 12px;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--admin-color-outline-variant);
+  font: var(--admin-text-body-md);
+  color: var(--admin-color-on-surface);
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--admin-color-secondary);
+}
+
+.option:has(input:checked) {
+  border-color: var(--admin-color-secondary);
+  background: color-mix(in srgb, var(--admin-color-secondary) 6%, transparent);
+}
+
+.option:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-secondary) 22%, transparent);
+}
+
+.option input:focus-visible {
+  outline: none;
+}
+
+.buttonSecondary {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-lowest);
+  color: var(--admin-color-on-surface);
+  font: var(--admin-text-label-md);
+}
+
+.buttonSecondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonPrimary {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: none;
+  background: var(--admin-color-primary);
+  color: var(--admin-color-on-primary);
+  font: var(--admin-text-label-md);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

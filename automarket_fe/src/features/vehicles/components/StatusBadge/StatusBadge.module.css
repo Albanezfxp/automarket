@@ -1,0 +1,15 @@
+.badge {
+  composes: plate from '../../../../styles/plate.module.css';
+}
+
+.disponivel {
+  composes: plateSuccess from '../../../../styles/plate.module.css';
+}
+
+.reservado {
+  composes: plateAccent from '../../../../styles/plate.module.css';
+}
+
+.vendido {
+  composes: plateMuted from '../../../../styles/plate.module.css';
+}
