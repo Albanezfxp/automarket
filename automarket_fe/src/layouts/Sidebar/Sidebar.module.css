@@ -1,0 +1,101 @@
+.sidebar {
+  display: none;
+  flex-direction: column;
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-lg) 0;
+  background: var(--admin-color-primary);
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 280px;
+  z-index: 40;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    display: flex;
+  }
+}
+
+.header {
+  padding: 0 var(--admin-space-gutter) var(--admin-space-xl);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+}
+
+.brandLogo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--admin-color-on-accent);
+}
+
+.brandName {
+  font: var(--admin-text-headline-sm);
+  color: var(--admin-color-on-primary);
+}
+
+.brandSubtitle {
+  font: var(--admin-text-label-sm);
+  color: color-mix(in srgb, var(--admin-color-on-primary) 55%, transparent);
+  margin-top: 2px;
+}
+
+.nav {
+  flex: 1;
+  padding: 0 var(--admin-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--admin-space-md);
+  border-radius: var(--admin-radius-sm);
+  color: color-mix(in srgb, var(--admin-color-on-primary) 68%, transparent);
+  font: var(--admin-text-label-md);
+  border-left: 3px solid transparent;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.navLink:hover {
+  background: color-mix(in srgb, var(--admin-color-on-primary) 8%, transparent);
+  color: var(--admin-color-on-primary);
+}
+
+/* Item ativo: preenchimento sólido + fio de cor à esquerda — a mesma
+   gramática da etiqueta (`plate.module.css`) aplicada à navegação. */
+.navLinkActive {
+  background: color-mix(in srgb, var(--admin-color-on-primary) 12%, transparent);
+  color: var(--admin-color-on-primary);
+  border-left-color: var(--admin-color-accent);
+}
+
+.navLinkActive:hover {
+  background: color-mix(in srgb, var(--admin-color-on-primary) 12%, transparent);
+  color: var(--admin-color-on-primary);
+}
+
+.footer {
+  padding: var(--admin-space-md) var(--admin-space-md) 0;
+  border-top: 1px solid color-mix(in srgb, var(--admin-color-on-primary) 12%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

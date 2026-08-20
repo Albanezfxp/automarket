@@ -1,0 +1,109 @@
+/**
+ * Tokens do tema "admin" (painel administrativo da loja).
+ *
+ * Escopados na classe `.admin-theme` (aplicada uma vez, no elemento raiz
+ * do AdminLayout e nas páginas de autenticação) em vez de `:root` global.
+ * Isso deixa o projeto pronto para conviver com outros temas (ex:
+ * `.catalog-theme` do site público) sem que os nomes de variável colidam.
+ *
+ * Direção visual (v4): "instrumento de painel" — azul-petróleo como cor de
+ * marca sólida (nunca gradiente), papel neutro morno como fundo, âmbar
+ * reservado só para sinal de atenção. Depois de três tentativas anteriores
+ * (genérica azul/cinza, fria demais em preto/cinza, decorativa demais com
+ * gradiente+glow em tudo), a meta aqui é hierarquia por cor/tipo/posição —
+ * não por camada de decoração. Sombra e raio de borda viram exceção, não
+ * regra. Ver `ai-prompts/redesign-completo-painel.md`.
+ */
+
+.admin-theme {
+  /* Cor — superfícies (papel neutro morno; nem cinza frio, nem creme editorial) */
+  --admin-color-background: #f1f0ea;
+  --admin-color-surface: #fbfaf6;
+  --admin-color-surface-container-lowest: #ffffff;
+  --admin-color-surface-container-low: #ebe9e1;
+  --admin-color-surface-container: #e3e0d5;
+  --admin-color-surface-container-high: #d8d4c5;
+  --admin-color-surface-container-highest: #cbc6b2;
+  --admin-color-surface-variant: #e3e0d5;
+  --admin-color-border: #dad6c8;
+
+  /* Cor — texto (tinta quase-preta neutra, não azul-marinho de gradiente) */
+  --admin-color-on-surface: #1b1f27;
+  --admin-color-on-surface-variant: #5a5e68;
+  --admin-color-outline: #888c93;
+  --admin-color-outline-variant: #d2cebf;
+
+  /* Cor — marca / ação (azul-petróleo sólido — instrumento automotivo, não SaaS) */
+  --admin-color-primary: #1c4a56;
+  --admin-color-primary-container: #123138;
+  --admin-color-on-primary: #f3f1e9;
+  --admin-color-secondary: #2a6b7d;
+  --admin-color-secondary-container: #3d8598;
+  --admin-color-secondary-hover: #1d4a57;
+  --admin-color-on-secondary: #ffffff;
+
+  /* Cor — acento âmbar (só sinal de atenção: alerta de preço; nunca decoração) */
+  --admin-color-accent: #b27a22;
+  --admin-color-accent-soft: #d9a554;
+  --admin-color-accent-hover: #8f620f;
+  --admin-color-on-accent: #241a08;
+
+  /* Cor — feedback (sólido, tom quente — não vermelho/verde de semáforo) */
+  --admin-color-error: #ae4038;
+  --admin-color-error-container: #f4dbd7;
+  --admin-color-on-error: #ffffff;
+  --admin-color-success: #2e7d55;
+  --admin-color-warning: #b27a22;
+
+  /* Espaçamento */
+  --admin-space-xs: 4px;
+  --admin-space-sm: 8px;
+  --admin-space-md: 16px;
+  --admin-space-lg: 24px;
+  --admin-space-gutter: 24px;
+  --admin-space-xl: 40px;
+  --admin-space-2xl: 64px;
+
+  /* Raio — contido; pílula só sobrevive em controles de fato circulares/segmentados
+     (toggle de status, contador, indicador de tier), não em card ou botão comum. */
+  --admin-radius-sm: 4px;
+  --admin-radius-md: 8px;
+  --admin-radius-lg: 12px;
+  --admin-radius-full: 9999px;
+
+  /* Tipografia */
+  --admin-font-heading: 'Plus Jakarta Sans', sans-serif;
+  --admin-font-body: 'Inter', sans-serif;
+  --admin-font-mono: 'JetBrains Mono', monospace;
+
+  --admin-text-display-md: 700 36px/42px var(--admin-font-heading);
+  --admin-text-headline-lg: 700 28px/36px var(--admin-font-heading);
+  --admin-text-headline-md: 600 22px/30px var(--admin-font-heading);
+  --admin-text-headline-sm: 600 17px/24px var(--admin-font-heading);
+  --admin-text-body-lg: 400 18px/28px var(--admin-font-body);
+  --admin-text-body-md: 400 16px/24px var(--admin-font-body);
+  --admin-text-body-sm: 400 14px/20px var(--admin-font-body);
+  --admin-text-label-md: 600 13.5px/20px var(--admin-font-heading);
+  --admin-text-label-sm: 600 11.5px/16px var(--admin-font-heading);
+  --admin-text-data-lg: 600 26px/32px var(--admin-font-mono);
+  --admin-text-data-md: 600 15px/22px var(--admin-font-mono);
+  --admin-text-data-sm: 500 12px/16px var(--admin-font-mono);
+
+  /* Rastreamento — discreto; caixa-alta é exceção reservada a rótulo pequeno. */
+  --admin-tracking-label: 0.03em;
+  --admin-tracking-display: -0.01em;
+
+  /* Elevação — exceção, não regra. Nível 1 é quase imperceptível (só dá
+     "chão" a input/botão em repouso); nível 2 é reservado para o que está
+     de fato flutuando sobre o conteúdo (modal, dropdown, barra fixa). Nada
+     de sombra colorida/"glow" — profundidade vem de cor e contraste, não
+     de brilho. */
+  --admin-shadow-level-1: 0 1px 2px rgba(27, 31, 39, 0.05);
+  --admin-shadow-level-2:
+    0 16px 32px -12px rgba(27, 31, 39, 0.22),
+    0 4px 10px rgba(27, 31, 39, 0.08);
+
+  background-color: var(--admin-color-background);
+  color: var(--admin-color-on-surface);
+  font: var(--admin-text-body-md);
+}

@@ -1,0 +1,19 @@
+.shell {
+  display: flex;
+  min-height: 100%;
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  padding: var(--admin-space-gutter);
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .content {
+    margin-inline-start: 280px;
+    width: calc(100% - 280px);
+  }
+}
