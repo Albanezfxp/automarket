@@ -7,7 +7,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 @Module({
   controllers: [ContatoWhatsappController],
   providers: [ContatoWhatsappService, PrismaService],
-  exports: [ContatoWhatsappModule],
+  exports: [ContatoWhatsappService],
   imports: [PrismaModule],
 })
 export class ContatoWhatsappModule {}

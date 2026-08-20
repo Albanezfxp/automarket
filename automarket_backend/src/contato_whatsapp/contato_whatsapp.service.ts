@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
   BadRequestException,
   InternalServerErrorException,
   Logger,
@@ -12,6 +13,7 @@ import { Prisma } from 'generated/prisma/client';
 
 const SELECT_PUBLICO = {
   id: true,
+  lojaId: true,
   veiculoId: true,
   vendedorId: true,
   createdAt: true,
@@ -23,10 +25,14 @@ export class ContatoWhatsappService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createContatoWhatsappDto: CreateContatoWhatsappDto) {
+  async create(
+    createContatoWhatsappDto: CreateContatoWhatsappDto,
+    lojaId: number,
+  ) {
     // Valida veículo e vendedor, e garante que o vendedor pertence
     // à mesma loja do veículo (regra de negócio: não faz sentido
-    // registrar contato com vendedor de outra loja)
+    // registrar contato com vendedor de outra loja) e que ambos
+    // pertencem à loja autenticada.
     try {
       const [veiculo, vendedor] = await this.prisma.$transaction([
         this.prisma.veiculo.findUnique({
@@ -57,7 +63,13 @@ export class ContatoWhatsappService {
           'O vendedor informado não pertence à mesma loja do veículo.',
         );
       }
+      if (veiculo.lojaId !== lojaId) {
+        throw new ForbiddenException(
+          'Você não tem acesso a esse veículo/vendedor.',
+        );
+      }
     } catch (error) {
+      if (error instanceof ForbiddenException) throw error;
       if (error instanceof BadRequestException) throw error;
       this.logger.error(
         'Erro ao validar veículo/vendedor para registro de contato',
@@ -69,12 +81,13 @@ export class ContatoWhatsappService {
     }
 
     try {
-      // Cria o evento de contato e incrementa o contador de visualizações
-      // relacionadas do veículo numa única transação
       const contato = await this.prisma.contatoWhatsapp.create({
         data: {
           veiculoId: createContatoWhatsappDto.veiculoId,
           vendedorId: createContatoWhatsappDto.vendedorId,
+          // denormalizado a partir do veículo (já validado acima) — sobrevive
+          // mesmo que o veículo seja arquivado/apagado depois (ver schema.prisma)
+          lojaId,
         },
         select: SELECT_PUBLICO,
       });
@@ -95,6 +108,67 @@ export class ContatoWhatsappService {
       );
     }
   }
+  /**
+   * Versão pública (visitante sem login, catálogo público) de create().
+   * Nunca confia num lojaId vindo do body de uma rota pública — deriva a
+   * loja a partir do veículo, e valida que o vendedor pertence à mesma
+   * loja e está ativo (mesmo padrão de VeiculosService.vender).
+   */
+  async createPublico(dto: CreateContatoWhatsappDto) {
+    try {
+      const veiculo = await this.prisma.veiculo.findUnique({
+        where: { id: dto.veiculoId },
+        select: { id: true, lojaId: true, ativo: true },
+      });
+      if (!veiculo || !veiculo.ativo) {
+        throw new BadRequestException(
+          `Veículo com id ${dto.veiculoId} não encontrado.`,
+        );
+      }
+
+      const vendedor = await this.prisma.vendedor.findUnique({
+        where: { id: dto.vendedorId },
+        select: { id: true, lojaId: true, ativo: true },
+      });
+      if (!vendedor) {
+        throw new BadRequestException(
+          `Vendedor com id ${dto.vendedorId} não encontrado.`,
+        );
+      }
+      if (!vendedor.ativo) {
+        throw new BadRequestException('Esse vendedor não está mais ativo.');
+      }
+      if (vendedor.lojaId !== veiculo.lojaId) {
+        throw new BadRequestException(
+          'O vendedor informado não pertence à mesma loja do veículo.',
+        );
+      }
+
+      return await this.prisma.contatoWhatsapp.create({
+        data: {
+          veiculoId: dto.veiculoId,
+          vendedorId: dto.vendedorId,
+          lojaId: veiculo.lojaId,
+        },
+        select: SELECT_PUBLICO,
+      });
+    } catch (error: any) {
+      if (error instanceof BadRequestException) throw error;
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2003'
+      ) {
+        throw new BadRequestException(
+          'Veículo ou vendedor informado não existe mais.',
+        );
+      }
+      this.logger.error('Erro ao registrar contato whatsapp público', error);
+      throw new InternalServerErrorException(
+        'Não foi possível registrar o contato.',
+      );
+    }
+  }
+
   async findAll(
     params: {
       veiculoId?: number;
@@ -113,7 +187,7 @@ export class ContatoWhatsappService {
       const where: Prisma.ContatoWhatsappWhereInput = {
         veiculoId: params.veiculoId,
         vendedorId: params.vendedorId,
-        veiculo: params.lojaId ? { lojaId: params.lojaId } : undefined,
+        lojaId: params.lojaId,
         createdAt:
           params.dataInicio || params.dataFim
             ? { gte: params.dataInicio, lte: params.dataFim }
@@ -147,7 +221,7 @@ export class ContatoWhatsappService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, lojaId: number) {
     try {
       const contato = await this.prisma.contatoWhatsapp.findUnique({
         where: { id },
@@ -161,10 +235,14 @@ export class ContatoWhatsappService {
       if (!contato) {
         throw new NotFoundException(`Contato com id ${id} não encontrado.`);
       }
+      if (contato.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a esse contato.');
+      }
 
       return contato;
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(`Erro ao buscar contato ${id}`, error);
       throw new InternalServerErrorException(
         'Não foi possível buscar o contato.',
@@ -172,11 +250,14 @@ export class ContatoWhatsappService {
     }
   }
 
-  async rankingPorVeiculo(lojaId: number, limite = 10) {
+  async rankingPorVeiculo(lojaId: number, limite = 10, dataInicio?: Date) {
     try {
       const resultado = await this.prisma.contatoWhatsapp.groupBy({
         by: ['veiculoId'],
-        where: { veiculo: { lojaId } },
+        where: {
+          lojaId,
+          createdAt: dataInicio ? { gte: dataInicio } : undefined,
+        },
         _count: { veiculoId: true },
         orderBy: { _count: { veiculoId: 'desc' } },
         take: limite,
@@ -197,8 +278,8 @@ export class ContatoWhatsappService {
     }
   }
 
-  async remove(id: number) {
-    await this.garantirQueExiste(id);
+  async remove(id: number, lojaId: number) {
+    await this.garantirQueExiste(id, lojaId);
 
     try {
       await this.prisma.contatoWhatsapp.delete({ where: { id } });
@@ -217,17 +298,21 @@ export class ContatoWhatsappService {
     }
   }
 
-  private async garantirQueExiste(id: number) {
+  private async garantirQueExiste(id: number, lojaId: number) {
     try {
       const contato = await this.prisma.contatoWhatsapp.findUnique({
         where: { id },
-        select: { id: true },
+        select: { id: true, lojaId: true },
       });
       if (!contato) {
         throw new NotFoundException(`Contato com id ${id} não encontrado.`);
       }
+      if (contato.lojaId !== lojaId) {
+        throw new ForbiddenException('Você não tem acesso a esse contato.');
+      }
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+      if (error instanceof ForbiddenException) throw error;
       this.logger.error(`Erro ao verificar existência do contato ${id}`, error);
       throw new InternalServerErrorException(
         'Não foi possível verificar o contato.',
