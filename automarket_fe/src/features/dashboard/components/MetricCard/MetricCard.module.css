@@ -1,0 +1,95 @@
+.card {
+  composes: panel panelHover from '../../dashboard-shared.module.css';
+  padding: var(--admin-space-lg);
+}
+
+/* Card em destaque: reservado à métrica mais importante da tela (Receita) —
+   o único lugar do dashboard com preenchimento cheio na cor de marca.
+   Seletor composto (`.card.cardFeatured`) de propósito: `.card` "compõe"
+   `.panel`/`.panelHover` de outro arquivo via `composes`, e uma classe só
+   (`.cardFeatured`) tem a mesma especificidade que `.panel` — quem vence
+   vira refém da ordem de bundling. Duas classes juntas sempre ganham. */
+.card.cardFeatured {
+  background: var(--admin-color-primary);
+  border-color: var(--admin-color-primary);
+}
+
+.card.cardFeatured:hover {
+  border-color: var(--admin-color-primary);
+}
+
+.cardFeatured .title {
+  color: color-mix(in srgb, var(--admin-color-on-primary) 72%, transparent);
+}
+
+.cardFeatured .value {
+  color: var(--admin-color-on-primary);
+}
+
+.cardFeatured .footnote {
+  color: color-mix(in srgb, var(--admin-color-on-primary) 72%, transparent);
+}
+
+.cardFeatured .trendPositive,
+.cardFeatured .trendNeutral {
+  color: var(--admin-color-on-primary);
+}
+
+/* Vermelho puro de erro perde contraste sobre o petróleo escuro — clareado
+   só aqui, mantendo o sinal "atenção" sem ficar ilegível. */
+.cardFeatured .trendNegative {
+  color: color-mix(in srgb, var(--admin-color-error) 40%, var(--admin-color-on-primary));
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: var(--admin-tracking-label);
+}
+
+.title :global(.material-symbols-outlined) {
+  font-size: 16px;
+}
+
+.valueRow {
+  margin-top: var(--admin-space-sm);
+}
+
+.value {
+  font: var(--admin-text-data-lg);
+  color: var(--admin-color-primary);
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font: var(--admin-text-label-sm);
+}
+
+.trend :global(.material-symbols-outlined) {
+  font-size: 16px;
+}
+
+.trendPositive {
+  color: var(--admin-color-success);
+}
+
+.trendNegative {
+  color: var(--admin-color-error);
+}
+
+.trendNeutral {
+  color: var(--admin-color-on-surface-variant);
+}
+
+.footnote {
+  margin-top: 4px;
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface-variant);
+}

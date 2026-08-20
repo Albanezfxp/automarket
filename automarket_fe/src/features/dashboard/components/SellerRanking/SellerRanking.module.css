@@ -1,0 +1,144 @@
+.card {
+  composes: panel from '../../dashboard-shared.module.css';
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  composes: panelHeader from '../../dashboard-shared.module.css';
+}
+
+.headerTitle {
+  composes: panelTitle from '../../dashboard-shared.module.css';
+}
+
+.headerSubtitle {
+  composes: panelSubtitle from '../../dashboard-shared.module.css';
+}
+
+.list {
+  flex: 1;
+  padding: var(--admin-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-md);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+  padding: 12px;
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-color-surface);
+  border: 1px solid color-mix(in srgb, var(--admin-color-outline-variant) 40%, transparent);
+  transition: background-color 150ms ease;
+}
+
+.item:hover {
+  background: var(--admin-color-surface-container-low);
+}
+
+.itemInactive {
+  opacity: 0.7;
+}
+
+.rankBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--admin-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--admin-text-label-md);
+  flex-shrink: 0;
+  background: var(--admin-color-surface-variant);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.rankBadgeFirst {
+  background: color-mix(in srgb, var(--admin-color-secondary) 12%, transparent);
+  color: var(--admin-color-secondary);
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font: var(--admin-text-label-md);
+  color: var(--admin-color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--admin-radius-full);
+  flex-shrink: 0;
+}
+
+.dotHigh {
+  background: var(--admin-color-success);
+}
+
+.dotMedium {
+  background: var(--admin-color-warning);
+}
+
+.dotLow {
+  background: var(--admin-color-error);
+}
+
+.salesColumn {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.salesValue {
+  font: var(--admin-text-data-sm);
+  color: var(--admin-color-on-surface);
+}
+
+.salesLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--admin-color-on-surface-variant);
+}
+
+.footer {
+  padding: var(--admin-space-md);
+  border-top: 1px solid var(--admin-color-surface-container-highest);
+  background: var(--admin-color-surface-container-lowest);
+  border-radius: 0 0 var(--admin-radius-lg) var(--admin-radius-lg);
+}
+
+.reportButton {
+  width: 100%;
+  height: 36px;
+  border-radius: var(--admin-radius-md);
+  text-align: center;
+  color: var(--admin-color-secondary);
+  font: var(--admin-text-label-md);
+  transition: background-color 150ms ease;
+}
+
+.reportButton:hover {
+  background: color-mix(in srgb, var(--admin-color-secondary) 8%, transparent);
+}
+
+.emptyState {
+  composes: emptyState from '../../dashboard-shared.module.css';
+}

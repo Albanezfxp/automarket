@@ -1,0 +1,135 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-xl);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  padding-bottom: var(--admin-space-sm);
+  border-bottom: 1px solid var(--admin-color-surface-container-highest);
+}
+
+.title {
+  font: var(--admin-text-display-md);
+  color: var(--admin-color-primary);
+}
+
+.subtitle {
+  font: var(--admin-text-body-lg);
+  color: var(--admin-color-on-surface-variant);
+  margin-top: 4px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+}
+
+.viewStoreLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--admin-radius-full);
+  color: var(--admin-color-secondary);
+  background: color-mix(in srgb, var(--admin-color-secondary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--admin-color-secondary) 16%, transparent);
+}
+
+.viewStoreLink :global(.material-symbols-outlined) {
+  font-size: 20px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--admin-space-gutter);
+}
+
+@media (min-width: 768px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .metricsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.secondaryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--admin-space-gutter);
+}
+
+@media (min-width: 1024px) {
+  .secondaryGrid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-gutter);
+  min-width: 0;
+}
+
+.stateMessage {
+  font: var(--admin-text-body-md);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.stateMessageError {
+  font: var(--admin-text-body-md);
+  color: var(--admin-color-error);
+}
+
+.skeletonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-xl);
+}
+
+.skeletonCard,
+.skeletonPanel {
+  border-radius: var(--admin-radius-lg);
+  border: 1px solid var(--admin-color-border);
+  background: linear-gradient(
+    100deg,
+    var(--admin-color-surface-container-lowest) 40%,
+    var(--admin-color-surface-container-low) 50%,
+    var(--admin-color-surface-container-lowest) 60%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+}
+
+.skeletonCard {
+  height: 128px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonCard,
+  .skeletonPanel {
+    animation: none;
+  }
+}
+
+@keyframes skeletonShimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}

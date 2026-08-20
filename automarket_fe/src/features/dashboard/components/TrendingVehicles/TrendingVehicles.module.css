@@ -1,0 +1,98 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-md);
+}
+
+.sectionTitle {
+  font: var(--admin-text-headline-sm);
+  color: var(--admin-color-primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--admin-space-md);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  composes: panel panelHover from '../../dashboard-shared.module.css';
+  overflow: hidden;
+}
+
+.imageWrapper {
+  height: 160px;
+  width: 100%;
+  background: var(--admin-color-surface-variant);
+  position: relative;
+  overflow: hidden;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.card:hover .imageWrapper img {
+  transform: scale(1.05);
+}
+
+.viewsBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--admin-color-surface-container-lowest);
+  padding: 4px 8px;
+  border-radius: var(--admin-radius-sm);
+  font: var(--admin-text-label-sm);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.viewsBadge :global(.material-symbols-outlined) {
+  font-size: 14px;
+  color: var(--admin-color-secondary);
+}
+
+.body {
+  padding: var(--admin-space-md);
+}
+
+.name {
+  font: var(--admin-text-label-md);
+  color: var(--admin-color-primary);
+  margin-bottom: var(--admin-space-sm);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface-variant);
+  margin-bottom: var(--admin-space-md);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metaItem :global(.material-symbols-outlined) {
+  font-size: 14px;
+}
+
+.price {
+  font: var(--admin-text-data-md);
+  color: var(--admin-color-secondary);
+}

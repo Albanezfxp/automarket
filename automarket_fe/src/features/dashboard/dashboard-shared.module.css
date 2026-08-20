@@ -1,0 +1,46 @@
+/**
+ * Padrões visuais repetidos entre os cards do Dashboard (MetricCard,
+ * PriceAlertTable, TrendingVehicles, SellerRanking): mesmo "painel" base,
+ * mesmo cabeçalho com título+subtítulo, mesmo estado vazio.
+ *
+ * Cada componente continua com seu próprio .module.css (co-location é
+ * requisito do projeto) e importa daqui via `composes: x from './...'`,
+ * então a duplicação de regras some sem centralizar o CSS num arquivo só.
+ */
+
+.panel {
+  background: var(--admin-color-surface-container-lowest);
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-lg);
+  transition: border-color 150ms ease;
+}
+
+.panelHover:hover {
+  border-color: var(--admin-color-outline);
+}
+
+.panelHeader {
+  padding: var(--admin-space-lg);
+  border-bottom: 1px solid var(--admin-color-surface-container-highest);
+}
+
+.panelTitle {
+  font: var(--admin-text-headline-sm);
+  color: var(--admin-color-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+}
+
+.panelSubtitle {
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface-variant);
+  margin-top: 4px;
+}
+
+.emptyState {
+  padding: var(--admin-space-xl) var(--admin-space-lg);
+  text-align: center;
+  color: var(--admin-color-on-surface-variant);
+  font: var(--admin-text-body-sm);
+}

@@ -1,0 +1,94 @@
+/* Renderizado sempre dentro do MetricCard com `featured` (fundo petróleo
+   sólido) — as cores aqui assumem esse fundo escuro, não o card neutro. */
+
+.valueLine {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+}
+
+.maskedValue {
+  font: var(--admin-text-data-lg);
+  color: color-mix(in srgb, var(--admin-color-on-primary) 40%, transparent);
+  letter-spacing: 0.05em;
+}
+
+.unlockButton {
+  color: var(--admin-color-on-primary);
+  display: inline-flex;
+  opacity: 0.75;
+  transition: opacity 150ms ease;
+}
+
+.unlockButton:hover {
+  opacity: 1;
+}
+
+.unlockButton :global(.material-symbols-outlined) {
+  font-size: 20px;
+}
+
+.restrictedNote {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font: var(--admin-text-label-sm);
+  color: color-mix(in srgb, var(--admin-color-accent-soft) 90%, transparent);
+}
+
+.restrictedNote :global(.material-symbols-outlined) {
+  font-size: 14px;
+}
+
+.promptBox {
+  width: 100%;
+  margin-top: var(--admin-space-sm);
+  background: color-mix(in srgb, var(--admin-color-on-primary) 10%, transparent);
+  padding: 12px;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid color-mix(in srgb, var(--admin-color-on-primary) 22%, transparent);
+}
+
+.promptRow {
+  display: flex;
+  gap: var(--admin-space-sm);
+}
+
+.promptInput {
+  width: 100%;
+  height: 32px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--admin-color-on-primary) 30%, transparent);
+  padding: 0 8px;
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface);
+  background: var(--admin-color-surface-container-lowest);
+}
+
+.promptInput:focus {
+  outline: none;
+  border-color: var(--admin-color-accent);
+  box-shadow: 0 0 0 1px var(--admin-color-accent);
+}
+
+.promptButton {
+  background: var(--admin-color-accent);
+  color: var(--admin-color-on-accent);
+  padding: 0 12px;
+  border-radius: var(--admin-radius-sm);
+  font: var(--admin-text-label-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 150ms ease;
+}
+
+.promptButton:hover {
+  background: var(--admin-color-accent-hover);
+}
+
+.promptError {
+  margin-top: 6px;
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-accent-soft);
+}

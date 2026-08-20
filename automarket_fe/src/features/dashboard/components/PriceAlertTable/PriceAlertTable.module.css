@@ -1,0 +1,140 @@
+.card {
+  composes: panel from '../../dashboard-shared.module.css';
+  overflow: hidden;
+}
+
+.header {
+  composes: panelHeader from '../../dashboard-shared.module.css';
+  background: color-mix(in srgb, var(--admin-color-surface) 50%, transparent);
+}
+
+.headerTitle {
+  composes: panelTitle from '../../dashboard-shared.module.css';
+}
+
+.headerTitle :global(.material-symbols-outlined) {
+  color: var(--admin-color-secondary);
+}
+
+.headerSubtitle {
+  composes: panelSubtitle from '../../dashboard-shared.module.css';
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.tableHead {
+  background: var(--admin-color-surface);
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--admin-color-surface-container-highest);
+}
+
+.tableHead th {
+  padding: 12px var(--admin-space-lg);
+  font-weight: 500;
+}
+
+.tableBody tr {
+  border-bottom: 1px solid var(--admin-color-surface-container-highest);
+  transition: background-color 150ms ease;
+}
+
+.tableBody tr:last-child {
+  border-bottom: none;
+}
+
+.tableBody tr:hover {
+  background: var(--admin-color-surface-container-low);
+}
+
+.tableBody td {
+  padding: var(--admin-space-md) var(--admin-space-lg);
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-primary);
+}
+
+.vehicleCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thumb {
+  width: 48px;
+  height: 32px;
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-color-surface-variant);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vehicleName {
+  font-weight: 500;
+}
+
+.vehicleMeta {
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.priceCell {
+  font: var(--admin-text-data-sm);
+  color: var(--admin-color-on-surface);
+}
+
+.metricCellHigh {
+  text-align: center;
+  color: var(--admin-color-error);
+  font: var(--admin-text-data-sm);
+}
+
+.metricCell {
+  text-align: center;
+  font: var(--admin-text-data-sm);
+  color: var(--admin-color-on-surface);
+}
+
+.actionCell {
+  text-align: right;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px 5px 8px;
+  border-radius: var(--admin-radius-sm);
+  border-left: 3px solid transparent;
+  font: var(--admin-text-label-sm);
+  font-weight: 600;
+}
+
+.badgeReduzirPreco {
+  background: color-mix(in srgb, var(--admin-color-error) 10%, transparent);
+  border-left-color: var(--admin-color-error);
+  color: var(--admin-color-error);
+}
+
+.badgeRevisarFotos {
+  background: color-mix(in srgb, var(--admin-color-accent) 12%, transparent);
+  border-left-color: var(--admin-color-accent);
+  color: var(--admin-color-accent-hover);
+}
+
+.emptyState {
+  composes: emptyState from '../../dashboard-shared.module.css';
+}
