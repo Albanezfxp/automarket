@@ -1,0 +1,8 @@
+# Claude Code — estado local de máquina, não deve ser compartilhado no repo
+# (settings.json e .claude/skills continuam versionados normalmente)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# OS
+.DS_Store
+Thumbs.db
