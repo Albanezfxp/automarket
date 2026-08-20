@@ -1,0 +1,80 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-md);
+  flex-wrap: wrap;
+}
+
+.searchWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--admin-color-outline);
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-lowest);
+  padding: 0 var(--admin-space-md) 0 40px;
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-on-surface);
+  box-shadow: var(--admin-shadow-level-1);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.searchInput::placeholder {
+  color: var(--admin-color-outline);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--admin-color-secondary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-secondary) 16%, transparent);
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--admin-radius-full);
+  background: var(--admin-color-surface-container-low);
+  border: 1px solid var(--admin-color-border);
+  flex-shrink: 0;
+}
+
+.filterTab {
+  height: 36px;
+  padding: 0 var(--admin-space-md);
+  border-radius: var(--admin-radius-full);
+  font: var(--admin-text-label-md);
+  color: var(--admin-color-on-surface-variant);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.filterTab:hover {
+  color: var(--admin-color-on-surface);
+}
+
+.filterTabActive,
+.filterTabActive:hover {
+  background: var(--admin-color-surface-container-lowest);
+  color: var(--admin-color-primary);
+  box-shadow: var(--admin-shadow-level-1);
+}

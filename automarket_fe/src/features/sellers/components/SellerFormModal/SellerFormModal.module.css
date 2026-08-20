@@ -1,0 +1,144 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font: var(--admin-text-label-sm);
+  font-weight: 600;
+  color: var(--admin-color-on-surface-variant);
+}
+
+.required::after {
+  content: ' *';
+  color: var(--admin-color-error);
+}
+
+.input {
+  height: 44px;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-low);
+  color: var(--admin-color-on-surface);
+  padding: 0 14px;
+  font: var(--admin-text-body-sm);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.input:hover {
+  border-color: var(--admin-color-outline);
+  background: var(--admin-color-surface-container-lowest);
+}
+
+.input::placeholder {
+  color: var(--admin-color-outline);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--admin-color-secondary);
+  background: var(--admin-color-surface-container-lowest);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-secondary) 16%, transparent);
+}
+
+.inputError {
+  border-color: var(--admin-color-error);
+}
+
+.inputError:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-error) 16%, transparent);
+}
+
+.errorText {
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-error);
+}
+
+.hintText {
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 var(--admin-space-md);
+  border-radius: var(--admin-radius-full);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-low);
+  font: var(--admin-text-body-sm);
+  font-weight: 500;
+  color: var(--admin-color-on-surface-variant);
+  cursor: pointer;
+  width: fit-content;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.checkboxRow:has(input:checked) {
+  border-color: var(--admin-color-secondary);
+  background: color-mix(in srgb, var(--admin-color-secondary) 8%, transparent);
+  color: var(--admin-color-secondary);
+}
+
+.checkboxRow:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-color-secondary) 22%, transparent);
+}
+
+.checkboxRow input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--admin-color-secondary);
+}
+
+.checkboxRow input:focus-visible {
+  outline: none;
+}
+
+.submitError {
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-error);
+}
+
+.buttonSecondary {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-lowest);
+  color: var(--admin-color-on-surface);
+  font: var(--admin-text-label-md);
+}
+
+.buttonSecondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonPrimary {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: none;
+  background: var(--admin-color-primary);
+  color: var(--admin-color-on-primary);
+  font: var(--admin-text-label-md);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

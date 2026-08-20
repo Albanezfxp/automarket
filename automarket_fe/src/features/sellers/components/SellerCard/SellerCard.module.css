@@ -1,0 +1,162 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-lg);
+  background: var(--admin-color-surface-container-lowest);
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-lg);
+  transition:
+    border-color 150ms ease,
+    opacity 150ms ease;
+}
+
+.card:hover {
+  border-color: var(--admin-color-outline);
+}
+
+.cardInativo {
+  opacity: 0.65;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* Anel sólido — o avatar (foto ou iniciais) fica "encaixado" dentro dele
+   com um respiro branco, sem gradiente. */
+.avatarRing {
+  width: 62px;
+  height: 62px;
+  padding: 3px;
+  border-radius: var(--admin-radius-full);
+  background: var(--admin-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarRingInativo {
+  background: var(--admin-color-outline-variant);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--admin-color-surface-container-lowest);
+  border-radius: var(--admin-radius-full);
+  object-fit: cover;
+}
+
+.avatarFallback {
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--admin-color-surface-container-lowest);
+  border-radius: var(--admin-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--admin-text-headline-sm);
+}
+
+.statusPill {
+  padding: 4px 10px;
+  border-radius: var(--admin-radius-full);
+  font: var(--admin-text-label-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statusAtivo {
+  background: color-mix(in srgb, var(--admin-color-success) 14%, transparent);
+  color: color-mix(in srgb, var(--admin-color-success) 60%, black);
+}
+
+.statusInativo {
+  background: var(--admin-color-surface-variant);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.name {
+  font: var(--admin-text-headline-sm);
+  color: var(--admin-color-primary);
+  margin-top: var(--admin-space-xs);
+}
+
+.whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-secondary);
+  transition: color 150ms ease;
+}
+
+.whatsapp:hover {
+  color: var(--admin-color-secondary-hover);
+  text-decoration: underline;
+}
+
+.whatsapp :global(.material-symbols-outlined) {
+  font-size: 18px;
+}
+
+.statRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--admin-space-sm) 0;
+  margin-top: var(--admin-space-xs);
+  border-top: 1px solid var(--admin-color-surface-container-highest);
+}
+
+.statLabel {
+  font: var(--admin-text-label-sm);
+  color: var(--admin-color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statValue {
+  font: var(--admin-text-data-md);
+  color: var(--admin-color-primary);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.actionButton,
+.actionButtonDanger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--admin-radius-sm);
+  color: var(--admin-color-on-surface-variant);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.actionButton :global(.material-symbols-outlined),
+.actionButtonDanger :global(.material-symbols-outlined) {
+  font-size: 18px;
+}
+
+.actionButton:hover {
+  color: var(--admin-color-secondary);
+  background: color-mix(in srgb, var(--admin-color-secondary) 10%, transparent);
+}
+
+.actionButtonDanger:hover {
+  color: var(--admin-color-error);
+  background: color-mix(in srgb, var(--admin-color-error) 10%, transparent);
+}

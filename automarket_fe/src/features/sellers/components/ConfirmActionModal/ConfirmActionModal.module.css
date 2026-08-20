@@ -1,0 +1,52 @@
+.message {
+  font: var(--admin-text-body-md);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.error {
+  margin-top: var(--admin-space-sm);
+  font: var(--admin-text-body-sm);
+  color: var(--admin-color-error);
+}
+
+.buttonSecondary {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-color-outline-variant);
+  background: var(--admin-color-surface-container-lowest);
+  color: var(--admin-color-on-surface);
+  font: var(--admin-text-label-md);
+}
+
+.buttonSecondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonPrimary {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: none;
+  background: var(--admin-color-primary);
+  color: var(--admin-color-on-primary);
+  font: var(--admin-text-label-md);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonDanger {
+  padding: 10px 20px;
+  border-radius: var(--admin-radius-sm);
+  border: none;
+  background: var(--admin-color-error);
+  color: var(--admin-color-on-error);
+  font: var(--admin-text-label-md);
+}
+
+.buttonDanger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
