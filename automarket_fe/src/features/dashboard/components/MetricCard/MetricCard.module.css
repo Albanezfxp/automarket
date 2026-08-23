@@ -4,14 +4,15 @@
 }
 
 /* Card em destaque: reservado à métrica mais importante da tela (Receita) —
-   o único lugar do dashboard com preenchimento cheio na cor de marca.
+   o único lugar do dashboard com preenchimento cheio na cor de marca, e o
+   único gradiente do tema (preto → cinza quase-preto, nunca colorido).
    Seletor composto (`.card.cardFeatured`) de propósito: `.card` "compõe"
    `.panel`/`.panelHover` de outro arquivo via `composes`, e uma classe só
    (`.cardFeatured`) tem a mesma especificidade que `.panel` — quem vence
    vira refém da ordem de bundling. Duas classes juntas sempre ganham. */
 .card.cardFeatured {
-  background: var(--admin-color-primary);
-  border-color: var(--admin-color-primary);
+  background: linear-gradient(155deg, var(--admin-color-secondary-container) 0%, var(--admin-color-primary-container) 100%);
+  border-color: var(--admin-color-primary-container);
 }
 
 .card.cardFeatured:hover {

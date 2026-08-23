@@ -6,40 +6,49 @@
  * Isso deixa o projeto pronto para conviver com outros temas (ex:
  * `.catalog-theme` do site público) sem que os nomes de variável colidam.
  *
- * Direção visual (v4): "instrumento de painel" — azul-petróleo como cor de
- * marca sólida (nunca gradiente), papel neutro morno como fundo, âmbar
- * reservado só para sinal de atenção. Depois de três tentativas anteriores
+ * Direção visual (v6): monoc­romático — fundo, superfícies, tipografia e
+ * marca vivem só em preto/branco/cinza, sem matiz nenhum. Azul-petróleo sai
+ * de vez: "marca" agora é tinta preta sólida, com gradiente preto→cinza
+ * bem escuro reservado a um único momento de destaque (o card de Receita,
+ * já era o "único lugar do dashboard com preenchimento cheio na cor de
+ * marca" antes disso — o gradiente só substitui o que já era cor chapada
+ * ali). Âmbar/vermelho/verde seguem existindo, mas só como sinal funcional
+ * (status do veículo, alerta de precificação, erro de formulário) — nunca
+ * mais como decoração de marca. Depois de cinco tentativas anteriores
  * (genérica azul/cinza, fria demais em preto/cinza, decorativa demais com
- * gradiente+glow em tudo), a meta aqui é hierarquia por cor/tipo/posição —
- * não por camada de decoração. Sombra e raio de borda viram exceção, não
- * regra. Ver `ai-prompts/redesign-completo-painel.md`.
+ * gradiente+glow em tudo, sidebar sólida escura destoando do resto claro,
+ * off-white morno que ainda carregava petróleo como cor de marca), a meta
+ * aqui é hierarquia por peso tipográfico e por preto/cinza/branco — cor
+ * vira exceção reservada a significado. Ver
+ * `ai-prompts/redesign-completo-painel.md`.
  */
 
 .admin-theme {
-  /* Cor — superfícies (papel neutro morno; nem cinza frio, nem creme editorial) */
-  --admin-color-background: #f1f0ea;
-  --admin-color-surface: #fbfaf6;
+  /* Cor — superfícies (cinza neutro puro, sem matiz — do canvas ao card mais alto) */
+  --admin-color-background: #f7f7f7;
+  --admin-color-surface: #ffffff;
   --admin-color-surface-container-lowest: #ffffff;
-  --admin-color-surface-container-low: #ebe9e1;
-  --admin-color-surface-container: #e3e0d5;
-  --admin-color-surface-container-high: #d8d4c5;
-  --admin-color-surface-container-highest: #cbc6b2;
-  --admin-color-surface-variant: #e3e0d5;
-  --admin-color-border: #dad6c8;
+  --admin-color-surface-container-low: #f0f0f0;
+  --admin-color-surface-container: #e6e6e6;
+  --admin-color-surface-container-high: #d6d6d6;
+  --admin-color-surface-container-highest: #bfbfbf;
+  --admin-color-surface-variant: #e6e6e6;
+  --admin-color-border: #e0e0e0;
 
-  /* Cor — texto (tinta quase-preta neutra, não azul-marinho de gradiente) */
-  --admin-color-on-surface: #1b1f27;
-  --admin-color-on-surface-variant: #5a5e68;
-  --admin-color-outline: #888c93;
-  --admin-color-outline-variant: #d2cebf;
+  /* Cor — texto (preto/cinza neutro, sem matiz) */
+  --admin-color-on-surface: #0a0a0a;
+  --admin-color-on-surface-variant: #5c5c5c;
+  --admin-color-outline: #8a8a8a;
+  --admin-color-outline-variant: #d6d6d6;
 
-  /* Cor — marca / ação (azul-petróleo sólido — instrumento automotivo, não SaaS) */
-  --admin-color-primary: #1c4a56;
-  --admin-color-primary-container: #123138;
-  --admin-color-on-primary: #f3f1e9;
-  --admin-color-secondary: #2a6b7d;
-  --admin-color-secondary-container: #3d8598;
-  --admin-color-secondary-hover: #1d4a57;
+  /* Cor — marca / ação (preto sólido; container mais escuro alimenta o único
+     gradiente do tema, no card de Receita) */
+  --admin-color-primary: #111111;
+  --admin-color-primary-container: #000000;
+  --admin-color-on-primary: #ffffff;
+  --admin-color-secondary: #333333;
+  --admin-color-secondary-container: #1a1a1a;
+  --admin-color-secondary-hover: #000000;
   --admin-color-on-secondary: #ffffff;
 
   /* Cor — acento âmbar (só sinal de atenção: alerta de preço; nunca decoração) */
@@ -98,10 +107,10 @@
      de fato flutuando sobre o conteúdo (modal, dropdown, barra fixa). Nada
      de sombra colorida/"glow" — profundidade vem de cor e contraste, não
      de brilho. */
-  --admin-shadow-level-1: 0 1px 2px rgba(27, 31, 39, 0.05);
+  --admin-shadow-level-1: 0 1px 2px rgba(0, 0, 0, 0.06);
   --admin-shadow-level-2:
-    0 16px 32px -12px rgba(27, 31, 39, 0.22),
-    0 4px 10px rgba(27, 31, 39, 0.08);
+    0 16px 32px -12px rgba(0, 0, 0, 0.22),
+    0 4px 10px rgba(0, 0, 0, 0.08);
 
   background-color: var(--admin-color-background);
   color: var(--admin-color-on-surface);
