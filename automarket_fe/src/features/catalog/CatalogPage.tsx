@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLojaAtual } from "./CatalogRoot";
 import { catalogService } from "../../service/Catalog.service";
 import type {
@@ -11,6 +11,9 @@ import { CategoryCarousel } from "./components/CategoryCarousel/CategoryCarousel
 import { FilterBar } from "./components/FilterBar/FilterBar";
 import styles from "./CatalogPage.module.css";
 import type { TipoVeiculo } from "../../types/vehicle";
+
+/** Altura (px) de seções visível antes do degradê "Ver mais" entrar em ação. */
+const ALTURA_SECOES_RECOLHIDA = 1400;
 
 /**
  * Home da loja: banner liso da loja (identidade/nav já ficam no
@@ -79,6 +82,26 @@ export default function CatalogPage() {
       .slice(0, 12);
   }, [veiculos]);
 
+  // "Ver mais" da página: as seções por categoria só ficam totalmente
+  // visíveis depois do clique — antes disso o bloco fica recolhido em
+  // `ALTURA_SECOES_RECOLHIDA` com um degradê por cima. `sobraConteudo` só
+  // fica true quando o conteúdo real excede essa altura (ResizeObserver no
+  // conteúdo sem recorte), pra não mostrar o botão quando a loja tem poucas
+  // categorias e tudo já coube.
+  const sectionsRef = useRef<HTMLDivElement>(null);
+  const [secoesExpandidas, setSecoesExpandidas] = useState(false);
+  const [sobraConteudo, setSobraConteudo] = useState(false);
+
+  useEffect(() => {
+    const el = sectionsRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setSobraConteudo(entry.target.scrollHeight > ALTURA_SECOES_RECOLHIDA);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [veiculos]);
+
   return (
     <div className={styles.page}>
       <section
@@ -144,23 +167,43 @@ export default function CatalogPage() {
         )}
 
         {!temFiltroAtivo && (
-          <>
-            {maisVistos.length > 0 && (
-              <CategoryCarousel title="Mais vistos">
-                {maisVistos.map((v) => (
-                  <VehicleCard key={v.id} veiculo={v} lojaSlug={loja.slug} />
-                ))}
-              </CategoryCarousel>
-            )}
+          <div
+            className={`${styles.sectionsWrap} ${
+              secoesExpandidas ? styles.sectionsWrapExpanded : ""
+            }`}
+          >
+            <div className={styles.sectionsInner} ref={sectionsRef}>
+              {maisVistos.length > 0 && (
+                <CategoryCarousel title="Mais vistos">
+                  {maisVistos.map((v) => (
+                    <VehicleCard key={v.id} veiculo={v} lojaSlug={loja.slug} />
+                  ))}
+                </CategoryCarousel>
+              )}
 
-            {porTipo.map(({ tipo, itens }) => (
-              <CategoryCarousel key={tipo} title={TIPO_VEICULO_LABELS[tipo]}>
-                {itens.map((v) => (
-                  <VehicleCard key={v.id} veiculo={v} lojaSlug={loja.slug} />
-                ))}
-              </CategoryCarousel>
-            ))}
-          </>
+              {porTipo.map(({ tipo, itens }) => (
+                <CategoryCarousel key={tipo} title={TIPO_VEICULO_LABELS[tipo]}>
+                  {itens.map((v) => (
+                    <VehicleCard key={v.id} veiculo={v} lojaSlug={loja.slug} />
+                  ))}
+                </CategoryCarousel>
+              ))}
+            </div>
+
+            {!secoesExpandidas && sobraConteudo && (
+              <div className={styles.sectionsFade}>
+                <button
+                  type="button"
+                  className={styles.sectionsMoreButton}
+                  onClick={() => setSecoesExpandidas(true)}
+                  aria-label="Ver mais categorias de veículos"
+                >
+                  <span className="material-symbols-outlined">expand_more</span>
+                </button>
+                <span className={styles.sectionsMoreLabel}>Ver mais</span>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

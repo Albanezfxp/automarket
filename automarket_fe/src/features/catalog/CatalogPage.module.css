@@ -92,6 +92,97 @@
   color: var(--catalog-color-on-surface-variant);
 }
 
+/* "Ver mais" da página: recolhe todas as seções por categoria numa altura
+   fixa, com um degradê pra transparente + botão flutuante no final —
+   clicar remove o recorte e mostra o resto das categorias. */
+.sectionsWrap {
+  position: relative;
+  max-height: 1400px;
+  overflow: hidden;
+}
+
+.sectionsWrapExpanded {
+  max-height: none;
+  overflow: visible;
+}
+
+.sectionsInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--catalog-space-2xl);
+}
+
+.sectionsFade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--catalog-space-sm);
+  padding-bottom: var(--catalog-space-lg);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--catalog-color-background) 70%
+  );
+  pointer-events: none;
+}
+
+.sectionsMoreButton {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: var(--catalog-radius-full);
+  background: var(--catalog-color-primary);
+  color: var(--catalog-color-on-primary);
+  box-shadow: var(--catalog-shadow-level-2);
+  cursor: pointer;
+  animation: sectionsMoreNudge 1.8s ease-in-out infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sectionsMoreButton:hover {
+  animation-play-state: paused;
+  transform: translateY(4px) scale(1.06);
+  box-shadow:
+    var(--catalog-shadow-level-2),
+    0 0 0 6px color-mix(in srgb, var(--catalog-color-primary) 18%, transparent);
+}
+
+.sectionsMoreButton .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.sectionsMoreLabel {
+  font: var(--catalog-text-label-md);
+  color: var(--catalog-color-on-surface-variant);
+  pointer-events: none;
+}
+
+@keyframes sectionsMoreNudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sectionsMoreButton {
+    animation: none;
+  }
+}
+
 .footer {
   text-align: center;
   padding: var(--catalog-space-lg);
