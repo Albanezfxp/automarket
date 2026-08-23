@@ -12,8 +12,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
 import { Prisma } from 'generated/prisma/client';
-// Campos seguros pra devolver na API — passwordHash nunca entra aqui
-const SELECT_PUBLICO = {
+// Campos seguros pra devolver na API — passwordHash nunca entra aqui.
+// Exportado porque `AuthService.login` também devolve a loja pro front e
+// precisa do mesmo formato (ver bug: login devolvia um subconjunto solto de
+// campos, então a tela de Configurações abria com metade dos campos vazios
+// até o primeiro save).
+export const SELECT_PUBLICO = {
   id: true,
   nome: true,
   slug: true,

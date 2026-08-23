@@ -6,7 +6,18 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { SELECT_PUBLICO } from '../lojas/lojas.service';
+
+// Mesmo SELECT_PUBLICO do LojasService + passwordHash (só pra comparar a
+// senha aqui dentro — nunca sai da função). Precisa ser o mesmo shape que
+// `LojasService.update` devolve, senão a sessão guardada após o login fica
+// com campos faltando até o lojista salvar algo em Configurações.
+const LOGIN_SELECT = {
+  ...SELECT_PUBLICO,
+  passwordHash: true,
+} satisfies Prisma.LojaSelect;
 
 @Injectable()
 export class AuthService {
@@ -18,32 +29,12 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    let loja: {
-      id: number;
-      nome: string;
-      slug: string;
-      logo: string | null;
-      banner: string | null;
-      email: string;
-      telefone: string | null;
-      ativo: boolean;
-      passwordHash: string;
-    } | null;
+    let loja: Prisma.LojaGetPayload<{ select: typeof LOGIN_SELECT }> | null;
 
     try {
       loja = await this.prisma.loja.findUnique({
         where: { email },
-        select: {
-          id: true,
-          nome: true,
-          slug: true,
-          logo: true,
-          banner: true,
-          email: true,
-          telefone: true,
-          ativo: true,
-          passwordHash: true,
-        },
+        select: LOGIN_SELECT,
       });
     } catch (error) {
       this.logger.error('Erro ao buscar loja para login', error);
