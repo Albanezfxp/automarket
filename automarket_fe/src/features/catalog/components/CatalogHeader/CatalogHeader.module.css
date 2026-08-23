@@ -43,22 +43,23 @@
 }
 
 .logo {
-  height: 40px;
-  max-width: 168px;
+  height: 48px;
+  max-width: 200px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .mark {
   flex-shrink: 0;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--catalog-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--catalog-color-primary);
   color: var(--catalog-color-on-primary);
-  font: 700 17px var(--catalog-font-heading);
+  font: 700 19px var(--catalog-font-heading);
 }
 
 .brandName {
