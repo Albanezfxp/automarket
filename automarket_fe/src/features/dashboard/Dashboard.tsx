@@ -5,6 +5,7 @@ import {
   formatSignedPercentage,
 } from "../../lib/format";
 import { downloadTextFile } from "../../lib/downloadFile";
+import { getLojaPublicUrl } from "../../lib/storeUrl";
 import { useAuth } from "../auth/AuthContext";
 import { dashboardService } from "../../service/Dashboard.service";
 import styles from "./Dashboard.module.css";
@@ -93,7 +94,7 @@ export default function Dashboard() {
           {loja && (
             <a
               className={styles.viewStoreLink}
-              href={`https://${loja.slug}.automarket.com.br`}
+              href={getLojaPublicUrl(loja.slug)}
               target="_blank"
               rel="noopener noreferrer"
               title={`Ver site público de ${loja.nome}`}
