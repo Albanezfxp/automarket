@@ -1,139 +1,141 @@
 # AutoMarket
 
-Sistema **white-label** para lojas de veículos usados. Não é um marketplace: cada loja contratante recebe seu próprio site público + painel administrativo, entregues como pacote fechado — a equipe cadastra de 10 a 30 veículos, cria a loja com login/senha e entrega tudo rodando em subdomínio próprio (`nomedaloja.automarket.com.br`).
+Aplicação full-stack composta por uma API NestJS + Prisma/PostgreSQL (`automarket_backend`) e uma SPA React + Vite (`automarket_fe`). O domínio é gestão de lojas de veículos usados: cada `Loja` tem seu próprio site público de catálogo e um painel administrativo autenticado, servidos pela mesma API.
 
-O nome "AutoMarket" nunca aparece como marca principal nas telas entregues ao cliente final — a loja é sempre a protagonista visual (logo, banner e nome dinâmicos). No máximo um "powered by" discreto no rodapé.
+O rodapé do site público exibe um "powered by AutoMarket" discreto (`Footer.tsx`); o restante da identidade visual do catálogo (logo, banner, nome, cores) vem dos dados da própria loja.
 
 ## Stack
 
-| Camada    | Tecnologias |
-|-----------|-------------|
-| Backend   | NestJS · Prisma ORM · PostgreSQL · JWT (`@nestjs/jwt`) · class-validator/class-transformer · Cloudflare R2 (S3-compatible, upload de imagens) |
-| Frontend  | React 19 · Vite · TypeScript · React Router · CSS puro (CSS Modules, sem framework de UI) |
+| Camada   | Tecnologias (de `package.json`) |
+|----------|----------------------------------|
+| Backend  | NestJS 11 · Prisma 6 (`@prisma/client`) · PostgreSQL · `@nestjs/jwt` · `@nestjs/schedule` · `class-validator`/`class-transformer` · `bcrypt` · `@aws-sdk/client-s3` + `s3-request-presigner` (upload compatível com S3) |
+| Frontend | React 19 · React Router 7 · Vite · TypeScript · CSS Modules (sem framework de UI) |
 
 ## Estrutura do repositório
 
 ```
-automarket_backend/   API NestJS + Prisma
-  src/
-    app/               módulo raiz
-    auth/              login da loja (JWT) e senha do gerente
-    lojas/             CRUD da loja + endereço + identidade visual
-    endereco/          endereço (1:1 com loja)
-    vendedor/          CRUD de vendedores
-    veiculos/          CRUD de veículos, venda/reserva/arquivamento
-    veiculo_imagem/    galeria de imagens do veículo (capa, ordem)
-    contato_whatsapp/  log imutável de cliques em "falar com vendedor"
-    dashboard/         métricas agregadas (faturamento, conversão, ranking...)
-    api_fipe/          integração com a API FIPE (cache de marcas/modelos/anos)
-    uploads/           upload de imagens para o Cloudflare R2
-    prisma/            client/serviço do Prisma
-  prisma/schema.prisma modelo de dados completo
+automarket_backend/src/
+  app/               módulo raiz (AppModule, bootstrap dos controllers/providers)
+  auth/              login (JWT), guard global, decorators @Public()/@LojaAtual()
+  lojas/             CRUD de Loja
+  endereco/          CRUD de Endereco (1:1 com Loja)
+  vendedor/          CRUD de Vendedor + ativar/desativar
+  veiculos/          CRUD de Veiculo, venda/reserva/exclusão, catálogo público,
+                     cron de arquivamento
+  veiculo_imagem/    CRUD das imagens de um veículo
+  contato_whatsapp/  registro (público) e consulta (autenticada) de contatos
+  dashboard/         métricas agregadas por loja e período
+  api_fipe/          proxy/cache para a API FIPE
+  uploads/           geração de URL pré-assinada para upload de imagens
+  prisma/            PrismaService (client)
 
-automarket_fe/        SPA React + Vite
-  src/
-    features/
-      auth/              login/registro da loja
-      dashboard/         visão geral e métricas do painel
-      vehicles/          CRUD de veículos no painel
-      sellers/           CRUD de vendedores no painel
-      settings/          configurações da loja
-      catalog/           catálogo público (home da loja)
-      vehiclesDetails/   detalhe do veículo (site público)
-      storeSellersPage/  lista de vendedores (site público)
-      storeLocationPage/ localização da loja (site público)
-    layouts/             AdminLayout + Sidebar (painel) / CatalogLayout (site público)
-    styles/themes/       tokens de tema escopados (`admin-theme.css`, `catalog-theme.css`)
-    service/              chamadas à API backend
-    lib/                  helpers (formatação, URL pública da loja, download de arquivo...)
+automarket_fe/src/
+  features/
+    auth/              login, registro, contexto de sessão, rota protegida
+    dashboard/         métricas do painel (cards, tabelas, gráficos simples)
+    vehicles/          CRUD de veículos no painel
+    sellers/           CRUD de vendedores no painel
+    settings/          edição dos dados da loja
+    catalog/           catálogo público (home da loja)
+    vehiclesDetails/   detalhe de um veículo (site público)
+    storeSellersPage/  lista de vendedores (site público)
+    storeLocationPage/ endereço da loja (site público)
+  layouts/             AdminLayout + Sidebar · CatalogLayout + Footer
+  service/             um arquivo por recurso da API (Auth, Lojas, Veiculos,
+                       Vendedores, Dashboard, Catalog, Uploads, apiFipe) sobre
+                       um cliente HTTP único (`service/http/api-cliente.ts`)
+  lib/                 helpers (formatação, download de arquivo, título/favicon
+                       de página, URL pública da loja)
+  styles/themes/       tokens de tema em CSS custom properties (admin-theme.css,
+                       catalog-theme.css)
 ```
 
 ## Modelo de dados
 
-Ver `automarket_backend/prisma/schema.prisma` para a fonte da verdade. Resumo das entidades:
+Fonte: `automarket_backend/prisma/schema.prisma`.
 
-- **Loja** — nome, `slug` (usado como subdomínio), logo/banner, cores de marca (aplicadas só no catálogo público), contato, endereço (1:1), senha de login e senha do gerente (hashes separados).
-- **Endereco** — 1:1 com Loja.
-- **Vendedor** — nome, foto, WhatsApp; N:1 com Loja.
-- **Veiculo** — N:1 com Loja. `marca`/`modelo` são `String` (não FK): vêm de um `<select>` populado pela API FIPE no cadastro, com `marcaFipeId`/`modeloFipeId` guardados só para reconsulta futura de preço. `itens` é um array do enum `ItemVeiculo` (lista fixa de opcionais/tecnologia, não justifica tabela relacional). Tem `visualizacoes`, `status` (`DISPONIVEL`/`RESERVADO`/`VENDIDO`) e `dataVenda`.
-- **VeiculoImagem** — N por veículo, com `ordem` e `capa` (garantidamente só uma capa por veículo).
-- **VeiculoArquivado** — retrato congelado de um veículo excluído (soft delete há 30+ dias), guardando só os campos usados pelas métricas históricas do Dashboard.
-- **ContatoWhatsapp** — log de evento imutável (só create/delete, nunca update): cada clique no modal "falar com vendedor" grava `veiculoId` + `vendedorId` + `createdAt`. É a fonte da maioria das métricas do Dashboard.
+- **Loja** — dados de identidade/contato, `slug` único, `corPrimaria`/`corSecundaria` (aplicadas no catálogo público via CSS custom properties), `passwordHash` (login) e `managerPasswordHash` (separado, só libera o faturamento no Dashboard).
+- **Endereco** — 1:1 com `Loja`.
+- **Vendedor** — N:1 com `Loja`; tem `whatsapp` e soft delete (`ativo`).
+- **Veiculo** — N:1 com `Loja`. `marca`/`modelo` são `String` (preenchidos a partir da API FIPE no cadastro; `marcaFipeId`/`modeloFipeId` ficam guardados para reconsulta). `itens` é um array do enum `ItemVeiculo` (lista fixa de opcionais/tecnologia). Campos de enum: `TipoVeiculo`, `Cambio`, `Direcao`, `Combustivel`, `Cor`, `StatusVeiculo` (`DISPONIVEL`/`RESERVADO`/`VENDIDO`). Tem `visualizacoes`, soft delete (`ativo` + `excluidoEm`) e `dataVenda`.
+- **VeiculoArquivado** — retrato congelado de um `Veiculo`, criado pelo cron de arquivamento antes do delete definitivo; guarda só os campos usados nas métricas do Dashboard (preço, status, visualizações, total de contatos, vendedor, datas).
+- **VeiculoImagem** — N por veículo, com `ordem` e `capa`.
+- **ContatoWhatsapp** — registro de evento (loja + veículo opcional + vendedor + `createdAt`); `veiculoId` é `SetNull` ao excluir o veículo, para o histórico sobreviver mesmo depois do veículo ser apagado.
 
-Loja, Vendedor e Veiculo usam **soft delete** (campo `ativo`) para preservar histórico de métricas.
+## API (rotas HTTP)
 
-## Telas
+Prefixo de cada controller entre parênteses. Rotas marcadas `@Public()` não exigem JWT — todas as demais passam pelo `JwtAuthGuard` global.
 
-**Site público** (4 páginas, header fixo com logo/nome da loja em todas elas):
-1. Catálogo — banner da loja, busca/filtros e seções de veículos por categoria.
-2. Detalhe do veículo — ficha completa; CTA abre modal para escolher qual vendedor contatar via WhatsApp.
-3. Vendedores — lista os vendedores ativos, com CTA direto para o WhatsApp de cada um.
-4. Localização — endereço da loja + link para o Google Maps.
+- **auth** (`/auth`) — `POST /login` `@Public()`.
+- **lojas** (`/lojas`) — `POST /` `@Public()` (cadastro de loja), `GET /`, `GET /publico/:slug` `@Public()`, `GET /:id`, `PATCH /:id`, `DELETE /:id` (as três últimas só na própria loja autenticada).
+- **endereco** (`/endereco`) — CRUD padrão + `GET /lojaid/:id`.
+- **vendedor** (`/vendedor`) — CRUD + `PATCH /desativar-vendedor/:id` e `PATCH /reativar-vendedor/:id`.
+- **veiculos** (`/veiculos`) — `GET /publico` e `GET /publico/:id` `@Public()` (catálogo, com filtros de busca/tipo/câmbio/combustível/preço/ano/paginação); `POST /`, `GET /`, `GET /:id`, `PATCH /:id`, `DELETE /:id`, `PATCH /:id/vender`, `PATCH /:id/reservar`, `PATCH /:id/disponibilizar`, `PATCH /:id/reativar` autenticados.
+- **veiculo-imagem** (`/veiculo-imagem`) — CRUD padrão.
+- **contato-whatsapp** (`/contato-whatsapp`) — `POST /publico` `@Public()` (visitante registra o contato); `POST /`, `GET /` (com filtros), `GET /:id`, `DELETE /:id` autenticados.
+- **dashboard** (`/dashboard`) — `GET /metricas?dataInicio=`, `POST /faturamento/revelar` (recebe a senha do gerente).
+- **api-fipe** (`/api-fipe`) — `@Public()` inteiro: `GET /marcas`, `GET /marcas/:marcaId/modelos`, `GET /marcas/:marcaId/modelos/:modeloId/anos`, `GET /marcas/:marcaId/modelos/:modeloId/anos/:anoId`.
+- **uploads** (`/uploads`) — `POST /presign`.
 
-**Painel administrativo** (sidebar com 4 seções):
-1. Dashboard — visão geral com métricas do período selecionado.
-2. Veículos — CRUD completo (cadastro via FIPE, galeria de imagens, venda/reserva/exclusão).
-3. Vendedores — CRUD completo.
-4. Configurações — identidade visual, dados de contato, endereço, redes sociais e senha do gerente.
+Erros do Prisma são mapeados de forma consistente nos services (`lojas`, `veiculos`, `vendedor`, `endereco`, `veiculo_imagem`, `contato_whatsapp`): `P2002` → 409, `P2003` → 400, `P2025` → 404.
 
-### Métricas do Dashboard
+## Autenticação e sessão
 
-1. Faturamento no período — oculto até o dono da loja digitar a senha do gerente.
-2. Ticket médio de venda.
-3. Taxa de conversão (contatos via WhatsApp → vendas).
-4. Valor total imobilizado em estoque.
-5. Veículos mais procurados (visualizações + contatos).
-6. Ranking de vendedores por contatos recebidos.
-7. Veículos com muita visualização e pouco contato — sinal de preço a revisar.
+- Login (`POST /auth/login`) retorna `{ accessToken, loja }`; o `AuthService` compara a senha com `bcrypt` contra `Loja.passwordHash`.
+- `JwtAuthGuard` está registrado como `APP_GUARD` global em `AppModule`; rotas marcadas com o decorator `@Public()` pulam a verificação. O decorator `@LojaAtual()` extrai a loja autenticada (a partir do payload do JWT) e a injeta no controller.
+- O faturamento do Dashboard exige uma segunda senha (`managerPasswordHash`, verificada por `AuthService.verificarSenhaGerente`), independente da senha de login.
+- No frontend, a sessão (`accessToken` + `loja`) fica no `AuthContext`/armazenamento local (`features/auth/session.ts`) e é enviada como header `Authorization: Bearer` em toda chamada (`service/http/api-cliente.ts`). Um 401 com sessão ativa limpa a sessão e redireciona para `/login`.
 
-## Autenticação
+## Rotina agendada
 
-Cada loja é uma conta própria: login por e-mail/senha retorna um JWT (`@nestjs/jwt`) usado nas rotas protegidas do painel. A visualização do faturamento no Dashboard é protegida por uma segunda senha (senha do gerente), separada da senha de login, verificada em uma rota própria antes de liberar o valor.
+`VeiculoArquivamentoService` roda todo dia à meia-noite (`@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)`, via `@nestjs/schedule`): veículos com soft delete (`ativo=false`) há 30 dias ou mais são congelados em `VeiculoArquivado` e então apagados definitivamente da tabela `Veiculo`.
+
+## Rotas do frontend
+
+Definidas em `automarket_fe/src/App.tsx`, com code-splitting por rota (`React.lazy`):
+
+- `/login`, `/registro` — públicas.
+- `/:lojaSlug` (`CatalogRoot`, resolve a loja por um `GET` público ao slug da rota) com filhas `index` (catálogo), `veiculo/:id`, `vendedores`, `localizacao` — públicas. Em desenvolvimento a loja é acessada por essa rota; o hook `useLojaSlug` documenta que, em produção, a resolução por subdomínio ficaria isolada nesse mesmo arquivo.
+- `/dashboard`, `/veiculos`, `/veiculos/novo`, `/veiculos/:id/editar`, `/vendedores`, `/configuracoes` — atrás de `ProtectedRoute` (exige sessão) + `AdminLayout`.
+
+## Variáveis de ambiente
+
+**Backend** (`automarket_backend/.env`, lido via `dotenv/config` em `main.ts`):
+
+```
+DATABASE_URL=
+JWT_SECRET=
+JWT_EXPIRES_IN=
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=
+R2_PUBLIC_BASE_URL=
+```
+
+**Frontend** — `VITE_API_URL` (opcional; sem ela o cliente HTTP usa `http://localhost:3000`).
+
+`main.ts` também fixa CORS para `http://localhost:5173` (origem do Vite em dev).
 
 ## Rodando localmente
 
-Pré-requisitos: Node.js, PostgreSQL.
-
-### Backend
-
 ```bash
+# Backend
 cd automarket_backend
 npm install
-# crie um .env com DATABASE_URL, JWT_SECRET, JWT_EXPIRES_IN
-# e as credenciais do Cloudflare R2 (R2_ACCOUNT_ID, R2_ACCESS_KEY_ID,
-# R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_BASE_URL)
 npx prisma migrate dev
 npx prisma generate
-npm run start:dev
-```
+npm run start:dev        # http://localhost:3000
 
-### Frontend
-
-```bash
+# Frontend
 cd automarket_fe
 npm install
-npm run dev
+npm run dev               # http://localhost:5173
 ```
 
-Em desenvolvimento não há proxy de subdomínio: cada loja é acessada pela rota `/:lojaSlug` (ver `useLojaSlug`/`getLojaPublicUrl`) em vez de `slug.automarket.com.br`, que é o formato usado em produção.
+Outros scripts disponíveis: `npm run build`, `npm run lint` e (no backend) `npm run test` / `test:e2e` / `npx prisma studio`.
 
-### Checagem de tipos
+## Convenções observadas no código
 
-```bash
-# em automarket_backend/ e automarket_fe/
-npx tsc --noEmit
-```
-
-## Convenções
-
-**Backend**
-- DTOs com `class-validator`/`class-transformer`; `ValidationPipe` global ativo em `main.ts`.
-- Services com try/catch, mapeando erros do Prisma (`P2002` → 409, `P2003` → 400, `P2025` → 404).
-- `passwordHash` nunca é retornado pela API — sempre `select` explícito nas queries.
-- Integração com a API FIPE é feita pelo backend (cache: marcas ~7 dias, modelos/anos ~1 dia), nunca direto do front.
-
-**Frontend**
-- CSS por componente (arquivo `.module.css` ao lado do `.tsx`), nunca um CSS gigante por página.
-- Tokens de design escopados por tema (`admin-theme.css` para o painel, `catalog-theme.css` para o site público) em vez de `:root` global.
-- Ícones: Material Symbols Outlined.
-- Code-splitting por rota, memoização quando faz sentido, imagens otimizadas.
+- Backend: `ValidationPipe({ whitelist: true, transform: true })` global; DTOs com `class-validator`; queries de `Loja` sempre com `select` explícito (nunca retornam `passwordHash`/`managerPasswordHash`).
+- Frontend: um `.module.css` por componente/página, sem CSS global de página inteira; tokens de tema em custom properties escopadas por classe (`.admin-theme`, `.catalog-theme`) em vez de `:root`.
