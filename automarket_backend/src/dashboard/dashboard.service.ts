@@ -27,7 +27,7 @@ function percentualVariacao(atual: number, anterior: number): number {
   return ((atual - anterior) / anterior) * 100;
 }
 
-const VISUALIZACOES_MINIMAS_ALERTA = 500;
+const VISUALIZACOES_MINIMAS_ALERTA = 100;
 const LIMITE_REDUZIR_PRECO = 0.5;
 const LIMITE_REVISAR_FOTOS = 1.2;
 const MAX_DIAS_PERIODO = 90;
@@ -83,7 +83,9 @@ export class DashboardService {
   }
 
   async metricas(lojaId: number, dataInicioStr?: string) {
-    const periodo = this.calcularPeriodo(this.resolverDataInicio(dataInicioStr));
+    const periodo = this.calcularPeriodo(
+      this.resolverDataInicio(dataInicioStr),
+    );
 
     const [
       estoque,
