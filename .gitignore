@@ -2,6 +2,7 @@
 # (settings.json e .claude/skills continuam versionados normalmente)
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+ai-prompts
 
 # OS
 .DS_Store
