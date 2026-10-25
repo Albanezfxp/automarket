@@ -59,6 +59,27 @@ export interface FiltrosVeiculoPublico {
   perPage?: number;
 }
 
+const MAX_PER_PAGE_PUBLICO = 60;
+
+/**
+ * Garante exatamente UMA capa por veículo (regra do schema): se o cliente
+ * mandar várias com `capa: true`, vale a primeira; se não mandar nenhuma, a
+ * primeira imagem vira capa.
+ */
+function montarImagens(
+  imagens: { url: string; ordem?: number; capa?: boolean }[],
+) {
+  const indiceCapa = Math.max(
+    0,
+    imagens.findIndex((img) => img.capa === true),
+  );
+  return imagens.map((img, index) => ({
+    url: img.url,
+    ordem: img.ordem ?? index,
+    capa: index === indiceCapa,
+  }));
+}
+
 @Injectable()
 export class VeiculosService {
   private readonly logger = new Logger(VeiculosService.name);
@@ -118,9 +139,14 @@ export class VeiculosService {
       throw new NotFoundException(`Loja "${filtros.slug}" não encontrada.`);
     }
 
-    const page = filtros.page && filtros.page > 0 ? filtros.page : 1;
+    const page =
+      filtros.page && filtros.page > 0 ? Math.floor(filtros.page) : 1;
+    // Teto de perPage: sem ele um visitante pede perPage=1000000 e baixa o
+    // catálogo inteiro (com joins) numa única query.
     const perPage =
-      filtros.perPage && filtros.perPage > 0 ? filtros.perPage : 24;
+      filtros.perPage && filtros.perPage > 0
+        ? Math.min(Math.floor(filtros.perPage), MAX_PER_PAGE_PUBLICO)
+        : 24;
 
     const where: Prisma.VeiculoWhereInput = {
       lojaId: loja.id,
@@ -321,11 +347,7 @@ export class VeiculosService {
           precoPromocional: createVeiculoDto.precoPromocional,
           imagens: createVeiculoDto.imagens
             ? {
-                create: createVeiculoDto.imagens.map((img, index) => ({
-                  url: img.url,
-                  ordem: img.ordem ?? index,
-                  capa: img.capa ?? index === 0,
-                })),
+                create: montarImagens(createVeiculoDto.imagens),
               }
             : undefined,
         },
@@ -392,11 +414,7 @@ export class VeiculosService {
           imagens: updateVeiculoDto.imagens
             ? {
                 deleteMany: {},
-                create: updateVeiculoDto.imagens.map((img, index) => ({
-                  url: img.url,
-                  ordem: img.ordem ?? index,
-                  capa: img.capa ?? index === 0, // primeira imagem vira capa por padrão
-                })),
+                create: montarImagens(updateVeiculoDto.imagens),
               }
             : undefined,
         },

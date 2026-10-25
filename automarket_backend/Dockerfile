@@ -14,7 +14,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/generated ./generated
-# O tsc só emite .js; o engine nativo do Prisma (.node) fica ao lado do client
+# O tsc sÃ³ emite .js; o engine nativo do Prisma (.node) fica ao lado do client
 # gerado e precisa estar junto do client compilado em dist/generated.
 COPY --from=build /app/generated/prisma/*.node ./dist/generated/prisma/
 COPY prisma ./prisma

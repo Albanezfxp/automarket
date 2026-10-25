@@ -16,6 +16,25 @@ import { LojaAtual, LojaAutenticada } from 'src/auth/loja-atual.decorator';
 import { StatusVeiculo, Cambio, Combustivel, TipoVeiculo } from 'generated/prisma/enums';
 import { Public } from 'src/auth/public.decorator';
 
+// Query string vem sempre como texto: valor não numérico ("abc") virava NaN e
+// derrubava a query do Prisma com 500. Aqui vira "filtro ausente".
+function numeroOuUndefined(valor?: string): number | undefined {
+  if (valor === undefined || valor === '') return undefined;
+  const n = Number(valor);
+  return Number.isFinite(n) ? n : undefined;
+}
+
+// Enum inválido na query também derrubava o Prisma; valor desconhecido é
+// ignorado em vez de gerar erro.
+function enumOuUndefined<T extends string>(
+  valor: string | undefined,
+  enumObj: Record<string, T>,
+): T | undefined {
+  return (Object.values(enumObj) as string[]).includes(valor as string)
+    ? (valor as T)
+    : undefined;
+}
+
 @Controller('veiculos')
 export class VeiculosController {
   constructor(private readonly veiculosService: VeiculosService) {}
@@ -40,15 +59,15 @@ export class VeiculosController {
     return this.veiculosService.findAllPublico({
       slug,
       busca,
-      tipoVeiculo,
-      cambio,
-      combustivel,
-      precoMin: precoMin ? +precoMin : undefined,
-      precoMax: precoMax ? +precoMax : undefined,
-      anoMin: anoMin ? +anoMin : undefined,
-      anoMax: anoMax ? +anoMax : undefined,
-      page: page ? +page : undefined,
-      perPage: perPage ? +perPage : undefined,
+      tipoVeiculo: enumOuUndefined(tipoVeiculo, TipoVeiculo),
+      cambio: enumOuUndefined(cambio, Cambio),
+      combustivel: enumOuUndefined(combustivel, Combustivel),
+      precoMin: numeroOuUndefined(precoMin),
+      precoMax: numeroOuUndefined(precoMax),
+      anoMin: numeroOuUndefined(anoMin),
+      anoMax: numeroOuUndefined(anoMax),
+      page: numeroOuUndefined(page),
+      perPage: numeroOuUndefined(perPage),
     });
   }
 

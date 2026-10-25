@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'crypto';
@@ -64,7 +68,8 @@ export class UploadsService {
       { expiresIn: 60 },
     );
 
-    const publicUrl = `${process.env.R2_PUBLIC_BASE_URL}/${key}`;
+    const baseUrl = (process.env.R2_PUBLIC_BASE_URL ?? '').replace(/\/$/, '');
+    const publicUrl = `${baseUrl}/${key}`;
 
     return { uploadUrl, publicUrl, key };
   }

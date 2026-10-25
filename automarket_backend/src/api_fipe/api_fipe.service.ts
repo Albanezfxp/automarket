@@ -3,6 +3,21 @@ import { MemoryTtlCache } from './memory-ttl-cache';
 
 const UM_DIA_MS = 24 * 60 * 60 * 1000;
 const SETE_DIAS_MS = 7 * UM_DIA_MS;
+const TIMEOUT_FIPE_MS = 10_000;
+
+// Ids da FIPE são numéricos (anoId tem hífen: "2020-1"). Validar antes de
+// interpolar na URL evita injetar caminhos ("..%2F") na API externa e
+// lotar o cache com chaves arbitrárias.
+const ID_FIPE = /^[\w-]{1,20}$/;
+
+function validarIds(...ids: string[]) {
+  if (!ids.every((id) => ID_FIPE.test(id))) {
+    throw new BadRequestException('Identificador FIPE inválido.');
+  }
+}
+
+const fetchFipe = (url: string) =>
+  fetch(url, { signal: AbortSignal.timeout(TIMEOUT_FIPE_MS) });
 
 @Injectable()
 export class ApiFipeService {
@@ -24,7 +39,7 @@ export class ApiFipeService {
     if (emCache) return emCache;
 
     try {
-      const marcas = await fetch(`${this.getBaseApiUrl}/carros/marcas`);
+      const marcas = await fetchFipe(`${this.getBaseApiUrl}/carros/marcas`);
       if (!marcas.ok) {
         throw new BadRequestException(
           'Erro em obter os dados das marcas da API',
@@ -47,12 +62,13 @@ export class ApiFipeService {
    * se a marca não existir, então a validação é redundante.
    */
   async getModelosDaMarca(marcaId: string) {
+    validarIds(marcaId);
     const chave = marcaId;
     const emCache = this.cacheModelos.get(chave);
     if (emCache) return emCache;
 
     try {
-      const models = await fetch(
+      const models = await fetchFipe(
         `${this.getBaseApiUrl}/carros/marcas/${marcaId}/modelos`,
       );
       if (!models.ok) {
@@ -71,12 +87,13 @@ export class ApiFipeService {
   }
 
   async getYearOfOneModel(marcaId: string, modeloId: string) {
+    validarIds(marcaId, modeloId);
     const chave = `${marcaId}:${modeloId}`;
     const emCache = this.cacheAnos.get(chave);
     if (emCache) return emCache;
 
     try {
-      const years = await fetch(
+      const years = await fetchFipe(
         `${this.getBaseApiUrl}/carros/marcas/${marcaId}/modelos/${modeloId}/anos`,
       );
 
@@ -100,12 +117,13 @@ export class ApiFipeService {
    * "versão"), `Combustivel` e `Valor` (preço de tabela).
    */
   async getDetalheAno(marcaId: string, modeloId: string, anoId: string) {
+    validarIds(marcaId, modeloId, anoId);
     const chave = `${marcaId}:${modeloId}:${anoId}`;
     const emCache = this.cacheDetalheAno.get(chave);
     if (emCache) return emCache;
 
     try {
-      const detalhe = await fetch(
+      const detalhe = await fetchFipe(
         `${this.getBaseApiUrl}/carros/marcas/${marcaId}/modelos/${modeloId}/anos/${anoId}`,
       );
 

@@ -19,6 +19,10 @@ const LOGIN_SELECT = {
   passwordHash: true,
 } satisfies Prisma.LojaSelect;
 
+// Hash bcrypt (cost 10) de uma string aleatória; nunca corresponde a senha real.
+const SENHA_FALSA_HASH =
+  '$2b$10$eq0Y7uCd7pOnqwrFfIkop.S6N8s44RqAbw.U83lDXjBPRtjE91kKG';
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -44,6 +48,9 @@ export class AuthService {
     }
 
     if (!loja) {
+      // bcrypt "descartável": mantém o tempo de resposta parecido com o de
+      // um e-mail existente, para não revelar quais e-mails estão cadastrados.
+      await bcrypt.compare(password, SENHA_FALSA_HASH);
       throw new UnauthorizedException('E-mail ou senha inválidos.');
     }
 

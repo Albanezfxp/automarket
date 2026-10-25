@@ -25,9 +25,11 @@ export class LojasController {
     return this.lojasService.create(createLojaDto);
   }
 
+  // Só devolve a própria loja: listar todas expunha e-mail/telefone de
+  // outras lojas para qualquer lojista autenticado.
   @Get()
-  findAll() {
-    return this.lojasService.findAll();
+  findAll(@LojaAtual() loja: LojaAutenticada) {
+    return this.lojasService.findAll(loja.id);
   }
 
   // Dados públicos da loja por slug, pro catálogo público (visitante sem

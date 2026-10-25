@@ -39,6 +39,19 @@ export const SELECT_PUBLICO = {
   endereco: true,
 } satisfies Prisma.LojaSelect;
 
+// Rotas do painel que convivem com `/:lojaSlug` na raiz do front: uma loja
+// com slug "login" ou "dashboard" ficaria inacessível (ou esconderia o painel).
+const SLUGS_RESERVADOS = new Set([
+  'login',
+  'registro',
+  'dashboard',
+  'veiculos',
+  'vendedores',
+  'configuracoes',
+  'api',
+  'health',
+]);
+
 @Injectable()
 export class LojasService {
   private readonly logger = new Logger(LojasService.name);
@@ -151,9 +164,10 @@ export class LojasService {
   // ==========================================
   // READ — listar
   // ==========================================
-  async findAll() {
+  async findAll(lojaId: number) {
     try {
       return await this.prisma.loja.findMany({
+        where: { id: lojaId },
         select: SELECT_PUBLICO,
         orderBy: { createdAt: 'desc' },
       });
@@ -250,6 +264,9 @@ export class LojasService {
     if (updateLojaDto.slug) {
       try {
         const slugFormatado = slugify(updateLojaDto.slug);
+        if (SLUGS_RESERVADOS.has(slugFormatado)) {
+          throw new ConflictException('Esse slug é reservado pelo sistema.');
+        }
         const emUso = await this.prisma.loja.findFirst({
           where: { slug: slugFormatado, NOT: { id } },
           select: { id: true },
@@ -380,10 +397,11 @@ export class LojasService {
       let contador = 1;
 
       while (
-        await this.prisma.loja.findUnique({
+        SLUGS_RESERVADOS.has(slug) ||
+        (await this.prisma.loja.findUnique({
           where: { slug },
           select: { id: true },
-        })
+        }))
       ) {
         slug = `${base}-${contador}`;
         contador++;
