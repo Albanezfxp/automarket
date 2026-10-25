@@ -6,8 +6,15 @@ export const READ_ONLY_EVENT = "automarket:read-only";
 /** Cold start do Render free leva 30–60s; 60s evita abortar a 1ª requisição. */
 const REQUEST_TIMEOUT_MS = 60_000;
 
+// Sem a env, só o dev cai no localhost; em produção um fallback para
+// localhost mascararia a variável esquecida na Vercel (as chamadas iriam
+// para o computador do visitante). A barra final é removida para não gerar
+// `//rota`.
 const getBaseUrl = () => {
-  return import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+  const url =
+    import.meta.env.VITE_API_URL ??
+    (import.meta.env.DEV ? "http://localhost:3000" : "");
+  return url.replace(/\/+$/, "");
 };
 
 interface RequestOptions extends Omit<RequestInit, "body"> {
@@ -36,14 +43,14 @@ async function request<T>(
   let response: Response;
   try {
     response = await fetch(`${getBaseUrl()}${path}`, {
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...(session ? { Authorization: `Bearer ${session.accessToken}` } : {}),
-      ...headers,
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      ...rest,
+      headers: {
+        "Content-Type": "application/json",
+        ...(session ? { Authorization: `Bearer ${session.accessToken}` } : {}),
+        ...headers,
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch (err) {
     const timeout = err instanceof DOMException && err.name === "TimeoutError";

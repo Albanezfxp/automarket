@@ -56,7 +56,7 @@ export function CatalogRoot() {
   // Título/favicon base do site da loja — páginas filhas (CatalogPage,
   // VehicleDetailPage etc.) podem sobrescrever o título com seu próprio
   // `usePageTitle` pra acrescentar um sufixo (ex: nome do veículo).
-  usePageTitle(loja?.nome ?? "AutoMarket");
+  usePageTitle(loja?.nome ?? "Catálogo de veículos");
   useFavicon(loja?.logo);
 
   if (erro) {
