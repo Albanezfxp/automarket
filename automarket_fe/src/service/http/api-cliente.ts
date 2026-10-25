@@ -1,5 +1,11 @@
 import { clearStoredSession, getStoredSession } from "../../features/auth/session";
 
+/** Evento disparado quando o backend (modo demo) recusa uma escrita. */
+export const READ_ONLY_EVENT = "automarket:read-only";
+
+/** Cold start do Render free leva 30–60s; 60s evita abortar a 1ª requisição. */
+const REQUEST_TIMEOUT_MS = 60_000;
+
 const getBaseUrl = () => {
   return import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 };
@@ -27,7 +33,10 @@ async function request<T>(
   const { body, headers, ...rest } = options;
   const session = getStoredSession();
 
-  const response = await fetch(`${getBaseUrl()}${path}`, {
+  let response: Response;
+  try {
+    response = await fetch(`${getBaseUrl()}${path}`, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     ...rest,
     headers: {
       "Content-Type": "application/json",
@@ -35,7 +44,16 @@ async function request<T>(
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+    });
+  } catch (err) {
+    const timeout = err instanceof DOMException && err.name === "TimeoutError";
+    throw new ApiError(
+      0,
+      timeout
+        ? "O servidor demorou para responder. Tente novamente em instantes."
+        : "Não foi possível conectar ao servidor.",
+    );
+  }
 
   // 401 com sessão ativa = token expirado/inválido, não credenciais erradas
   // de login (login não manda Authorization, então cai fora deste ramo e
@@ -52,6 +70,9 @@ async function request<T>(
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 403 && data?.code === "READ_ONLY") {
+      window.dispatchEvent(new Event(READ_ONLY_EVENT));
+    }
     throw new ApiError(
       response.status,
       data?.message ?? "Erro na requisição.",

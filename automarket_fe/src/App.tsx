@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AdminLayout } from "./layouts/AdminLayout/AdminLayout";
 import { ProtectedRoute } from "./features/auth/ProtectedRoute";
 import { CatalogRoot } from "./features/catalog/CatalogRoot";
+import { ReadOnlyToast } from "./components/ReadOnlyToast/ReadOnlyToast";
 
 /**
  * Cada rota é seu próprio chunk (code-splitting por página). `AdminLayout`
@@ -39,6 +40,7 @@ const StoreLocationPage = lazy(
 export default function App() {
   return (
     <Suspense fallback={null}>
+      <ReadOnlyToast />
       <Routes>
         <Route path="login" element={<LoginPage />} />
         <Route path="registro" element={<RegisterPage />} />
