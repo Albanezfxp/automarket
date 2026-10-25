@@ -6,6 +6,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
+// Falha no boot em vez de assinar tokens com segredo indefinido.
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET não definido.');
+}
+
 @Module({
   imports: [
     PrismaModule,

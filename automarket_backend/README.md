@@ -96,3 +96,24 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+## Deploy da demo (Render + Neon)
+
+1. **Banco (Neon):** use a connection string direta (sem `-pooler`).
+2. **Render:** Web Service → Docker, *Root Directory* `automarket_backend`. O container roda `prisma migrate deploy` e depois `node dist/src/main`.
+3. **Variáveis de ambiente:**
+
+| Variável | Observação |
+| --- | --- |
+| `DATABASE_URL` | Neon |
+| `JWT_SECRET`, `JWT_EXPIRES_IN` | segredo longo e aleatório; ex.: `7d` |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_BASE_URL` | fotos |
+| `CORS_ORIGINS` | URL do front na Vercel (substitui o padrão localhost) |
+| `READ_ONLY` | `true` na demo: escritas respondem 403 `{"code":"READ_ONLY"}`, exceto login, revelar faturamento e contato WhatsApp público |
+| `PORT` | o Render define sozinho |
+| `NODE_OPTIONS` | `--max-old-space-size=384` no plano free |
+
+4. **Seed (uma vez, da sua máquina, apontando para o Neon):**
+   `DATABASE_URL=… DEMO_PASSWORD=… npm run seed:demo` — idempotente (loja `demo`, 3 vendedores, 12 veículos, contatos e vendas).
+5. **Anti-suspensão:** monitor HTTP no UptimeRobot em `GET /health` a cada 5 min (não toca no banco).

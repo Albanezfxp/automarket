@@ -30,6 +30,8 @@ import { ApiFipeService } from 'src/api_fipe/api_fipe.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { DashboardModule } from 'src/dashboard/dashboard.module';
+import { HealthController } from 'src/health/health.controller';
+import { ReadOnlyGuard } from 'src/read-only/read-only.guard';
 
 @Module({
   imports: [
@@ -55,6 +57,7 @@ import { DashboardModule } from 'src/dashboard/dashboard.module';
     VeiculoImagemController,
     VendedorController,
     ApiFipeController,
+    HealthController,
   ],
   providers: [
     AppService,
@@ -66,6 +69,7 @@ import { DashboardModule } from 'src/dashboard/dashboard.module';
     VeiculoImagemService,
     VendedorService,
     ApiFipeService,
+    { provide: APP_GUARD, useClass: ReadOnlyGuard },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
