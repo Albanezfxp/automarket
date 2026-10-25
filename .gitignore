@@ -8,3 +8,10 @@ CLAUDE.md
 # OS
 .DS_Store
 Thumbs.db
+
+# Skills instaladas por ferramenta (não versionar)
+.agents/
+.windsurf/
+skills-lock.json
+/automarket_backend/.claude/
+output/
