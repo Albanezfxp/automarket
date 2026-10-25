@@ -187,3 +187,11 @@
   font: var(--admin-text-label-sm);
   color: var(--admin-color-on-surface-variant);
 }
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .removeButton {
+    width: 44px;
+    height: 44px;
+  }
+}

@@ -11,6 +11,8 @@
 }
 
 .table {
+  /* largura minima: abaixo disso a tabela rola dentro de .tableScroll em vez de espremer as colunas */
+  min-width: 720px;
   width: 100%;
   border-collapse: collapse;
   text-align: left;
@@ -219,4 +221,27 @@
 
 .pageButtonActive:hover {
   background: var(--admin-color-secondary);
+}
+
+/* Sem hover (touch) as ações nunca apareceriam: opacity 0 só vale com mouse.
+   Também revela quando algum botão da linha recebe foco por teclado. */
+.row:focus-within .actions {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .actions {
+    opacity: 1;
+  }
+}
+
+/* Alvos de toque de 44px em telas touch; desktop (mouse) mantém o visual. */
+@media (pointer: coarse) {
+  .actionButton,
+  .actionButtonDanger,
+  .pageNav,
+  .pageButton {
+    width: 44px;
+    height: 44px;
+  }
 }

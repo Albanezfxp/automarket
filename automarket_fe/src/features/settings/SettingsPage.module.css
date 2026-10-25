@@ -80,7 +80,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--admin-space-md);
 }
 
@@ -165,4 +165,24 @@
 .submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.input {
+  min-width: 0;
+}
+
+/* Campos lado a lado só a partir de ~560px; no celular empilham. */
+@media (max-width: 559px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section {
+    padding: var(--admin-space-md);
+  }
+
+  .footerBar .submit {
+    width: 100%;
+    min-height: 44px;
+  }
 }

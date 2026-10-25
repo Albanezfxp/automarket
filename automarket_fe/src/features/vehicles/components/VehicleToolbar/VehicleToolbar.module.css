@@ -1,4 +1,5 @@
 .toolbar {
+  position: relative; /* referencia do painel de filtros no mobile */
   display: flex;
   align-items: center;
   gap: var(--admin-space-md);
@@ -161,4 +162,26 @@
 .clearButton:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .filterButton {
+    min-height: 44px;
+  }
+}
+
+/* Celular: o painel ancorado ao botão (right: 0) saía pela esquerda da tela
+   porque o botão fica no início da linha. Aqui ele passa a ocupar a largura
+   da própria toolbar. */
+@media (max-width: 639px) {
+  .filterWrapper {
+    position: static;
+  }
+
+  .panel {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
 }

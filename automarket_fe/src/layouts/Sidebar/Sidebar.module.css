@@ -1,5 +1,13 @@
+/**
+ * Mobile-first: abaixo de 768px a sidebar é um drawer off-canvas (aberto pelo
+ * botão hambúrguer da barra superior, ver AdminLayout). Fechada, fica com
+ * `visibility: hidden` — além de invisível, sai da ordem de tabulação e da
+ * árvore de acessibilidade, então o teclado/leitor de tela não "entra" num
+ * menu que não está na tela. A transição de visibility é atrasada para que a
+ * animação de saída termine antes de ocultar.
+ */
 .sidebar {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: var(--admin-space-sm);
   padding: var(--admin-space-lg) 0;
@@ -8,14 +16,61 @@
   position: fixed;
   inset-block: 0;
   inset-inline-start: 0;
-  width: 280px;
-  z-index: 40;
+  width: min(280px, 85vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 60;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition:
+    transform 220ms ease,
+    visibility 0s linear 220ms;
+}
+
+.sidebarOpen {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform 220ms ease,
+    visibility 0s;
 }
 
 @media (min-width: 768px) {
   .sidebar {
-    display: flex;
+    width: 280px;
+    transform: none;
+    visibility: visible;
+    transition: none;
   }
+
+  .closeButton {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebarOpen {
+    transition: none;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: var(--admin-space-sm);
+  right: var(--admin-space-sm);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--admin-radius-sm);
+  color: var(--admin-color-on-surface-variant);
+}
+
+.closeButton:hover {
+  background: color-mix(in srgb, var(--admin-color-primary) 6%, transparent);
+  color: var(--admin-color-primary);
 }
 
 .header {
@@ -25,6 +80,7 @@
 }
 
 .brand {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--admin-space-sm);
@@ -62,6 +118,9 @@
 }
 
 .navLink {
+  min-height: 44px;
+  width: 100%;
+  text-align: left;
   position: relative;
   display: flex;
   align-items: center;
@@ -101,4 +160,11 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+/* No drawer, reserva espaco para o botao fechar nao cobrir o nome da loja. */
+@media (max-width: 767px) {
+  .brand {
+    padding-right: 44px;
+  }
 }

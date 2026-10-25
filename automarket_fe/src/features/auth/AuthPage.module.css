@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   background: var(--admin-color-background);
 }
 
@@ -220,7 +220,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--admin-space-md);
 }
 
@@ -305,4 +305,20 @@
 
 .link:hover {
   text-decoration: underline;
+}
+
+/* Campos lado a lado só cabem a partir de ~480px; abaixo disso (320–375px
+   de celular) ficam empilhados para não espremer inputs nem estourar a tela. */
+@media (max-width: 479px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formSide {
+    padding: var(--admin-space-md);
+  }
+}
+
+.input {
+  min-width: 0;
 }

@@ -18,6 +18,8 @@
   width: 100%;
   max-width: var(--modal-max-width, 640px);
   max-height: min(90vh, 900px);
+  /* dvh: no celular, 90vh ignora a barra de endereço e corta o rodapé do modal */
+  max-height: min(100dvh - 2 * var(--admin-space-md), 900px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -62,11 +64,13 @@
 .body {
   padding: var(--admin-space-lg);
   overflow-y: auto;
+  min-height: 0; /* permite rolar o corpo dentro do flex em vez de empurrar o rodapé para fora */
 }
 
 .footer {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: var(--admin-space-sm);
   padding: var(--admin-space-md) var(--admin-space-lg);
   border-top: 1px solid var(--admin-color-surface-container-highest);
@@ -91,5 +95,26 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 479px) {
+  .header,
+  .body,
+  .footer {
+    padding-inline: var(--admin-space-md);
+  }
+
+  /* botões do rodapé ocupam a largura toda e empilham, alvo de toque grande */
+  .footer > * {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+}
+
+@media (pointer: coarse) {
+  .closeButton {
+    width: 44px;
+    height: 44px;
   }
 }

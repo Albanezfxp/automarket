@@ -15,6 +15,7 @@
   width: 100%;
   max-width: 420px;
   max-height: 100%;
+  overscroll-behavior: contain;
   overflow-y: auto; /* lista longa de vendedores não corta em telas baixas */
   padding: var(--catalog-space-lg);
   box-shadow: var(--catalog-shadow-level-2);

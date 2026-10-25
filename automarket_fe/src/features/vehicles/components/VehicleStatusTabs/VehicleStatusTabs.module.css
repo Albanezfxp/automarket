@@ -7,7 +7,14 @@
   background: var(--admin-color-surface-container-low);
   border: 1px solid var(--admin-color-border);
   width: fit-content;
-  flex-wrap: wrap;
+  max-width: 100%;
+  /* uma linha só; no celular rola na horizontal em vez de quebrar em varias linhas dentro da pilula */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -15,6 +22,8 @@
   align-items: center;
   gap: 6px;
   height: 36px;
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 0 var(--admin-space-md);
   border-radius: var(--admin-radius-full);
   font: var(--admin-text-label-md);
@@ -48,4 +57,10 @@
 .tabActive .count {
   color: var(--admin-color-secondary);
   background: color-mix(in srgb, var(--admin-color-secondary) 12%, transparent);
+}
+
+@media (pointer: coarse) {
+  .tab {
+    height: 44px;
+  }
 }

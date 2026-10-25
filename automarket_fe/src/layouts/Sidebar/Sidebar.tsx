@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, type Ref } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import styles from "./Sidebar.module.css";
@@ -6,6 +6,12 @@ import { PRIMARY_NAV_ITEMS } from "./navItems";
 
 interface SidebarProps {
   storeName: string;
+  /** Mobile (<768px): drawer aberto. No desktop a sidebar é sempre visível. */
+  open?: boolean;
+  /** Fecha o drawer (botão fechar). Esc/clique fora ficam no AdminLayout. */
+  onClose?: () => void;
+  /** Ref do botão fechar — o AdminLayout move o foco para ele ao abrir. */
+  closeButtonRef?: Ref<HTMLButtonElement>;
 }
 
 /**
@@ -13,7 +19,12 @@ interface SidebarProps {
  * a cada troca de rota (o `<Outlet />` muda), mas a sidebar em si depende
  * só do nome da loja e da rota ativa — não precisa recalcular no resto.
  */
-function SidebarComponent({ storeName }: SidebarProps) {
+function SidebarComponent({
+  storeName,
+  open = false,
+  onClose,
+  closeButtonRef,
+}: SidebarProps) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -23,7 +34,20 @@ function SidebarComponent({ storeName }: SidebarProps) {
   }
 
   return (
-    <nav className={styles.sidebar} aria-label="Navegação principal">
+    <nav
+      id="admin-sidebar"
+      className={`${styles.sidebar} ${open ? styles.sidebarOpen : ""}`}
+      aria-label="Navegação principal"
+    >
+      <button
+        type="button"
+        ref={closeButtonRef}
+        className={styles.closeButton}
+        onClick={onClose}
+        aria-label="Fechar menu"
+      >
+        <span className="material-symbols-outlined">close</span>
+      </button>
       <div className={styles.header}>
         <div className={styles.brand}>
           <div className={styles.brandLogo}>

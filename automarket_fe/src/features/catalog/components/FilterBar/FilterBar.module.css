@@ -83,3 +83,11 @@
   font: var(--catalog-text-body-sm);
   cursor: pointer;
 }
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .select,
+  .searchInput {
+    min-height: 44px;
+  }
+}

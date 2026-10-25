@@ -129,6 +129,7 @@
 }
 
 .phoneLink {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -157,7 +158,8 @@
   display: none;
   border: none;
   background: none;
-  padding: 4px;
+  padding: 10px; /* alvo de toque >= 44px com icone de 24px */
+  margin: -6px;
   color: var(--catalog-color-on-surface);
   cursor: pointer;
 }
@@ -202,13 +204,16 @@
   }
 
   .mobilePanelOpen {
-    max-height: 260px;
+    max-height: 360px;
     padding: var(--catalog-space-lg);
     border-top-color: var(--catalog-color-border);
   }
 
   .mobilePanel .navLink {
     font-size: 15px;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
   }
 }
 

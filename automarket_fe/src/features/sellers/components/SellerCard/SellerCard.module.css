@@ -160,3 +160,16 @@
   color: var(--admin-color-error);
   background: color-mix(in srgb, var(--admin-color-error) 10%, transparent);
 }
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .actionButton,
+  .actionButtonDanger {
+    width: 44px;
+    height: 44px;
+  }
+
+  .whatsapp {
+    min-height: 44px;
+  }
+}

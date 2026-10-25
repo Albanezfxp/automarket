@@ -49,31 +49,31 @@
 
 .metricsGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--admin-space-gutter);
 }
 
 @media (min-width: 768px) {
   .metricsGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
   .metricsGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 .secondaryGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--admin-space-gutter);
 }
 
 @media (min-width: 1024px) {
   .secondaryGrid {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 }
 
@@ -131,5 +131,13 @@
   }
   to {
     background-position: -100% 0;
+  }
+}
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .viewStoreLink {
+    width: 44px;
+    height: 44px;
   }
 }

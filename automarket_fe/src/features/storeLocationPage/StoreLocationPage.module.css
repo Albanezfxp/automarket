@@ -50,14 +50,14 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   gap: var(--catalog-space-2xl);
   align-items: stretch;
 }
 
 @media (max-width: 860px) {
   .layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

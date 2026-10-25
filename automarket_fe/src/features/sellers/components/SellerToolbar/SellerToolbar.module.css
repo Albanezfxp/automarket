@@ -78,3 +78,10 @@
   color: var(--admin-color-primary);
   box-shadow: var(--admin-shadow-level-1);
 }
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .filterTab {
+    min-height: 44px;
+  }
+}

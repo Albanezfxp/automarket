@@ -81,7 +81,7 @@
 /* Layout principal: formulário + resumo fixo */
 .layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--admin-space-lg);
   align-items: start;
 }
@@ -148,19 +148,19 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--admin-space-md);
 }
 
 @media (min-width: 560px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 900px) {
   .grid3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -394,11 +394,20 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--admin-space-md);
-  padding: var(--admin-space-md) var(--admin-space-lg);
-  margin: calc(var(--admin-space-xl) * -1) calc(var(--admin-space-lg) * -1) 0;
+  flex-wrap: wrap;
+  padding: var(--admin-space-md);
+  /* margem negativa = padding do <main> (16px no celular, 24px a partir de 480px, ver AdminLayout) para a barra sangrar até a borda */
+  margin: calc(var(--admin-space-xl) * -1) calc(var(--admin-space-md) * -1) 0;
   background: color-mix(in srgb, var(--admin-color-surface) 92%, transparent);
   backdrop-filter: blur(6px);
   border-top: 1px solid var(--admin-color-border);
+}
+
+@media (min-width: 480px) {
+  .footerBar {
+    padding: var(--admin-space-md) var(--admin-space-lg);
+    margin-inline: calc(var(--admin-space-lg) * -1);
+  }
 }
 
 .submitError {
@@ -447,4 +456,12 @@
 .buttonPrimary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Alvos de toque >= 44px em telas touch; mouse mantém o visual compacto. */
+@media (pointer: coarse) {
+  .backButton {
+    width: 44px;
+    height: 44px;
+  }
 }

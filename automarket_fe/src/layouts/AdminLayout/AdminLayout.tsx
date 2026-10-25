@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import { usePageTitle } from "../../lib/usePageTitle";
@@ -38,9 +38,70 @@ export function AdminLayout() {
   );
   useFavicon(loja?.logo);
 
+  // Drawer da sidebar (só visível <768px; no desktop a sidebar é fixa).
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  // Navegar (clicar num item) fecha o drawer.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    // Esc fecha e devolve o foco ao botão hambúrguer.
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+
+    // Trava o scroll da página atrás do drawer.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // O drawer só fica visível (visibility) no frame seguinte à troca de
+    // classe; focar antes disso seria ignorado pelo navegador.
+    const frame = requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      cancelAnimationFrame(frame);
+    };
+  }, [menuOpen]);
+
   return (
     <div className={`admin-theme ${styles.shell}`}>
-      <Sidebar storeName={loja?.nome ?? ""} />
+      <header className={styles.topbar}>
+        <button
+          type="button"
+          ref={menuButtonRef}
+          className={styles.menuButton}
+          onClick={() => setMenuOpen(true)}
+          aria-label="Abrir menu"
+          aria-expanded={menuOpen}
+          aria-controls="admin-sidebar"
+        >
+          <span className="material-symbols-outlined">menu</span>
+        </button>
+        <span className={styles.topbarTitle}>{loja?.nome ?? "Painel"}</span>
+      </header>
+      {menuOpen && (
+        <div className={styles.backdrop} onClick={closeMenu} aria-hidden="true" />
+      )}
+      <Sidebar
+        storeName={loja?.nome ?? ""}
+        open={menuOpen}
+        onClose={closeMenu}
+        closeButtonRef={closeButtonRef}
+      />
       <main className={styles.content}>
         <Suspense fallback={null}>
           <Outlet />
